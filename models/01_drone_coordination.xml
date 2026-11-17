@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+//Model size
+const int N = 3;
+//Mission budget
+const int MISSION_SIZE = 3;
+//transmission duration, just for start
+const int LINK_DELAY = 2;
+
+typedef int[0,N-1] drone_id;
+// internal gcs interaction
+chan begin_upload[N];
+// network interfaces and channels for mission announcments, sending and delivery, state between network
+chan count_tx[N];
+chan count_rx[N];
+
+//Channels for item requests of drones
+chan request_tx[N];
+chan request_rx[N];
+</declaration>
+	<template>
+		<name>GCSSupervisor</name>
+		<declaration>int[0,N-1] nextDrone = 0;</declaration>
+		<location id="id0" x="-586" y="-68">
+			<name x="-596" y="-102">Idle</name>
+		</location>
+		<location id="id1" x="-365" y="-68">
+			<name x="-375" y="-102">DispatchUploads</name>
+		</location>
+		<location id="id2" x="-85" y="-68">
+			<name x="-119" y="-102">Uploading</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id3">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-425" y="85">nextDrone &lt; N-1</label>
+			<label kind="synchronisation" x="-459" y="51">begin_upload[nextDrone]!</label>
+			<label kind="assignment" x="-450" y="68">nextDrone = nextDrone + 1</label>
+			<nail x="-297" y="-8"/>
+			<nail x="-357" y="51"/>
+			<nail x="-433" y="-8"/>
+		</transition>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-289" y="-51">nextDrone == N-1</label>
+			<label kind="synchronisation" x="-331" y="-68">begin_upload[nextDrone]!</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="-568" y="-68">nextDrone = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Network</name>
+		<declaration>clock t;
+drone_id drone_Peer = 0;
+
+int[0,1] messageKind = 0;</declaration>
+		<location id="id6" x="-238" y="-85">
+			<name x="-248" y="-119">Idle</name>
+		</location>
+		<location id="id7" x="153" y="-85">
+			<name x="143" y="-119">Delivering</name>
+			<label kind="invariant" x="143" y="-68">t &lt;= LINK_DELAY</label>
+		</location>
+		<init ref="id6"/>
+		<transition id="id8">
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-153" y="-391">messageKind == 1 &amp;&amp; t&gt;= LINK_DELAY</label>
+			<label kind="synchronisation" x="-119" y="-374">request_rx[drone_Peer]!</label>
+			<nail x="-51" y="-357"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="select" x="-102" y="119">d: drone_id</label>
+			<label kind="synchronisation" x="-102" y="153">request_tx[d]?</label>
+			<label kind="assignment" x="-195" y="136">drone_Peer = d, messageKind = 1, t = 0</label>
+			<nail x="-59" y="119"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-213" y="-179">messageKind == 0 &amp;&amp; t &gt;=LINK_DELAY</label>
+			<label kind="synchronisation" x="-170" y="-162">count_rx[drone_Peer]!</label>
+			<nail x="-68" y="-136"/>
+		</transition>
+		<transition id="id11">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="select" x="-127" y="-110">d : drone_id</label>
+			<label kind="synchronisation" x="-144" y="-76">count_tx[d]?</label>
+			<label kind="assignment" x="-212" y="-51">drone_Peer = d, t= 0, messageKind = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>MissionReceiver</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>int[0,MISSION_SIZE] expectedCount = 0;</declaration>
+		<location id="id12" x="-229" y="0">
+			<name x="-239" y="-34">WaitCount</name>
+		</location>
+		<location id="id13" x="110" y="0">
+			<name x="100" y="-34">HaveCount</name>
+		</location>
+		<location id="id14" x="306" y="0">
+			<name x="272" y="-34">WaitItem</name>
+		</location>
+		<init ref="id12"/>
+		<transition id="id15">
+			<source ref="id13"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="128" y="-17">request_tx[id]!</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="-119" y="-25">count_rx[id]?</label>
+			<label kind="assignment" x="-170" y="0">expectedCount = MISSION_SIZE</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">MissionSender</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id17" x="-433" y="-51">
+			<name x="-443" y="-85">Idle</name>
+		</location>
+		<location id="id18" x="-144" y="-51">
+			<name x="-154" y="-85">Announce</name>
+		</location>
+		<location id="id19" x="76" y="-51">
+			<name x="66" y="-85">WaitRequest</name>
+		</location>
+		<location id="id20" x="280" y="-51">
+			<name x="270" y="-85">SendItem</name>
+		</location>
+		<init ref="id17"/>
+		<transition id="id21">
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="110" y="-42">request_rx[id]?</label>
+		</transition>
+		<transition id="id22">
+			<source ref="id18"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-127" y="-42">count_tx[id]!</label>
+		</transition>
+		<transition id="id23">
+			<source ref="id17"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-374" y="-42">begin_upload[id]?</label>
+		</transition>
+	</template>
+	<system>
+
+Supervisor = GCSSupervisor();
+
+Sender0 = MissionSender(0);
+Sender1 = MissionSender(1);
+Sender2 = MissionSender(2);
+
+Drone0 = MissionReceiver(0);
+Drone1 = MissionReceiver(1);
+Drone2 =MissionReceiver(2);
+
+Link = Network();
+
+system Supervisor,
+       Sender0, Sender1, Sender2, Drone0, Drone1, Drone2, Link;</system>
+	<queries>
+		<query>
+			<formula>A[] (Sender0.SendItem imply Drone0.WaitItem)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-11-17 20:52:09 +0800">
+			</result>
+		</query>
+	</queries>
+</nta>
