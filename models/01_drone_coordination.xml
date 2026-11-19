@@ -10,16 +10,26 @@ const int MISSION_SIZE = 3;
 const int LINK_DELAY = 2;
 
 typedef int[0,N-1] drone_id;
+typedef int[0, MISSION_SIZE-1];
+
 // internal gcs interaction
 chan begin_upload[N];
 // network interfaces and channels for mission announcments, sending and delivery, state between network
-chan count_tx[N];
-chan count_rx[N];
+chan count_tx[N][MISSION_SIZE];
+chan count_rx[N][MISSION_SIZE];
+
+chan item_tx[N][MISSION_SIZE];
+chan item_rx[N][MISSION_SIZE];
+
+chan ack_tx[N];
+chan ack_rx[N];
 
 //Channels for item requests of drones
 chan request_tx[N];
 chan request_rx[N];
-</declaration>
+
+//Variable to perceive if the item transfer is done
+bool uploadDone[N];</declaration>
 	<template>
 		<name>GCSSupervisor</name>
 		<declaration>int[0,N-1] nextDrone = 0;</declaration>
@@ -72,17 +82,17 @@ int[0,1] messageKind = 0;</declaration>
 		<transition id="id8">
 			<source ref="id7"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-153" y="-391">messageKind == 1 &amp;&amp; t&gt;= LINK_DELAY</label>
-			<label kind="synchronisation" x="-119" y="-374">request_rx[drone_Peer]!</label>
-			<nail x="-51" y="-357"/>
+			<label kind="guard" x="-187" y="-348">messageKind == 1 &amp;&amp; t&gt;= LINK_DELAY</label>
+			<label kind="synchronisation" x="-153" y="-331">request_rx[drone_Peer]!</label>
+			<nail x="-59" y="-297"/>
 		</transition>
 		<transition id="id9">
 			<source ref="id6"/>
 			<target ref="id7"/>
-			<label kind="select" x="-102" y="119">d: drone_id</label>
-			<label kind="synchronisation" x="-102" y="153">request_tx[d]?</label>
-			<label kind="assignment" x="-195" y="136">drone_Peer = d, messageKind = 1, t = 0</label>
-			<nail x="-59" y="119"/>
+			<label kind="select" x="-102" y="59">d: drone_id</label>
+			<label kind="synchronisation" x="-102" y="93">request_tx[d]?</label>
+			<label kind="assignment" x="-195" y="76">drone_Peer = d, messageKind = 1, t = 0</label>
+			<nail x="-59" y="59"/>
 		</transition>
 		<transition id="id10">
 			<source ref="id7"/>
@@ -102,7 +112,12 @@ int[0,1] messageKind = 0;</declaration>
 	<template>
 		<name>MissionReceiver</name>
 		<parameter>const drone_id id</parameter>
-		<declaration>int[0,MISSION_SIZE] expectedCount = 0;</declaration>
+		<declaration>//Anouncde Number of mission items
+int[0,MISSION_SIZE] expectedCount = 0;
+//Index of item beign requested right now
+item_id nextSequence = 0;
+//Number of accepted items
+int[0,MISSION_SIZE] receivedCount = 0</declaration>
 		<location id="id12" x="-229" y="0">
 			<name x="-239" y="-34">WaitCount</name>
 		</location>
@@ -128,7 +143,8 @@ int[0,1] messageKind = 0;</declaration>
 	<template>
 		<name x="5" y="5">MissionSender</name>
 		<parameter>const drone_id id</parameter>
-		<declaration>// Place local declarations here.
+		<declaration>item_id requested = 0;
+
 </declaration>
 		<location id="id17" x="-433" y="-51">
 			<name x="-443" y="-85">Idle</name>
@@ -142,18 +158,35 @@ int[0,1] messageKind = 0;</declaration>
 		<location id="id20" x="280" y="-51">
 			<name x="270" y="-85">SendItem</name>
 		</location>
+		<location id="id21" x="76" y="119">
+			<name x="66" y="85">Done</name>
+		</location>
 		<init ref="id17"/>
-		<transition id="id21">
+		<transition id="id22">
+			<source ref="id19"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-25" y="59">ack_rx[id]?</label>
+			<label kind="assignment" x="-110" y="34">uploadDone[id] = true</label>
+		</transition>
+		<transition id="id23">
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="76" y="-187">item_tx[id][requested]!</label>
+			<nail x="170" y="-161"/>
+		</transition>
+		<transition id="id24">
 			<source ref="id19"/>
 			<target ref="id20"/>
-			<label kind="synchronisation" x="110" y="-42">request_rx[id]?</label>
+			<label kind="select" x="110" y="-25">s : item_id</label>
+			<label kind="synchronisation" x="110" y="-42">request_rx[id][s]?</label>
+			<label kind="assignment" x="110" y="0">requested = s</label>
 		</transition>
-		<transition id="id22">
+		<transition id="id25">
 			<source ref="id18"/>
 			<target ref="id19"/>
 			<label kind="synchronisation" x="-127" y="-42">count_tx[id]!</label>
 		</transition>
-		<transition id="id23">
+		<transition id="id26">
 			<source ref="id17"/>
 			<target ref="id18"/>
 			<label kind="synchronisation" x="-374" y="-42">begin_upload[id]?</label>
@@ -180,6 +213,21 @@ system Supervisor,
 			<formula>A[] (Sender0.SendItem imply Drone0.WaitItem)</formula>
 			<comment/>
 			<result outcome="success" type="quality" timestamp="2026-11-17 20:52:09 +0800">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Drone0.HaveCount imply
+     Drone0.expectedCount == MISSION_SIZE)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-11-18 17:17:45 +0800">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (Sender0.SendItem &amp;&amp;
+     Sender1.SendItem &amp;&amp;
+     Sender2.SendItem)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-11-18 17:18:22 +0800">
 			</result>
 		</query>
 	</queries>
