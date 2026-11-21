@@ -29,10 +29,66 @@ chan request_tx[N][MISSION_SIZE];
 chan request_rx[N][MISSION_SIZE];
 
 //Variable to perceive if the item transfer is done
-bool uploadDone[N];</declaration>
+bool uploadDone[N];
+
+// ***************************************************************************
+// * MAVLink COMMAND protocol (COMMAND / COMMAND_ACK)  - model 03            *
+// * After Prepared, the GCS sends ARM to every drone, then START.           *
+// * CommandClient = GCS side, CommandServer = drone side.                   *
+// ***************************************************************************
+
+// Test setting: true = the network may lose any command-protocol message
+// (COMMAND or COMMAND_ACK). Mission-protocol messages are never lost.
+const bool LOSSY = false;
+
+const int NB_CMD = 2;
+typedef int[0,NB_CMD-1] cmd_id;
+const int ARM = 0;
+const int START = 1;
+
+// Timeout and retry (CommandClient)
+// Time the GCS waits for a COMMAND_ACK. Measured with the sup query (LOSSY = false,
+// N = 3): an ACK can take up to 2*N*LINK_DELAY = 12, because the network carries one
+// message at a time and the other drones' messages go first. Shorter = useless re-sends.
+const int ACK_TIMEOUT = (2*N+1)*LINK_DELAY;
+const int MAX_RETRY = 2;              // re-sends after the first try (3 tries in total)
+
+// "urgent chan": the synchronisation happens as soon as both sides are ready
+// (time cannot pass while it is possible), but time CAN pass while the
+// network is busy. An urgent location would forbid that and cause a timelock.
+// Supervisor -&gt; CommandClient (internal GCS request)
+urgent chan begin_command[N][NB_CMD];
+
+// COMMAND: CommandClient -&gt; network -&gt; CommandServer
+urgent chan cmd_tx[N][NB_CMD];
+chan cmd_rx[N][NB_CMD];
+
+// COMMAND_ACK accepted / denied: CommandServer -&gt; network -&gt; CommandClient
+urgent chan accepted_tx[N][NB_CMD], denied_tx[N][NB_CMD];
+chan accepted_rx[N][NB_CMD], denied_rx[N][NB_CMD];
+
+// Broadcast with no receiver: forces the supervisor to move on as soon as
+// its guard is true (instead of possibly waiting forever)
+urgent broadcast chan hurry;
+
+// What the GCS knows (set by CommandClient)
+bool cmdAccepted[N][NB_CMD];
+bool cmdDenied[N][NB_CMD];
+bool cmdFailed[N][NB_CMD];  // no ACK after all the tries
+
+// What is really true on the drone (set by CommandServer)
+bool armed[N];
+bool started[N];
+
+// Set by MissionReceiver when its mission is complete (on the ACK edge)
+bool missionInstalled[N];</declaration>
 	<template>
 		<name>GCSSupervisor</name>
-		<declaration>int[0,N-1] nextDrone = 0;</declaration>
+		<declaration>int[0,N-1] nextDrone = 0;
+
+// Command phase: drones that already received the command
+bool armSent[N];
+bool startSent[N];</declaration>
 		<location id="id0" x="-586" y="-68">
 			<name x="-596" y="-102">Idle</name>
 		</location>
@@ -44,6 +100,18 @@ bool uploadDone[N];</declaration>
 		</location>
 		<location id="id3" x="229" y="-68">
 			<name x="195" y="-102">Prepared</name>
+		</location>
+		<location id="id100" x="527" y="-68">
+			<name x="500" y="-102">Arming</name>
+		</location>
+		<location id="id101" x="867" y="-68">
+			<name x="840" y="-102">Starting</name>
+		</location>
+		<location id="id102" x="1207" y="-68">
+			<name x="1190" y="-102">Done</name>
+		</location>
+		<location id="id103" x="867" y="170">
+			<name x="840" y="187">Aborted</name>
 		</location>
 		<init ref="id0"/>
 		<transition id="id4">
@@ -72,6 +140,56 @@ bool uploadDone[N];</declaration>
 			<target ref="id1"/>
 			<label kind="assignment" x="-568" y="-68">nextDrone = 0</label>
 		</transition>
+		<transition id="id104">
+			<source ref="id3"/>
+			<target ref="id100"/>
+			<label kind="synchronisation" x="300" y="-93">hurry!</label>
+		</transition>
+		<transition id="id105">
+			<source ref="id100"/>
+			<target ref="id100"/>
+			<label kind="select" x="457" y="-280">i : drone_id</label>
+			<label kind="guard" x="457" y="-263">!armSent[i]</label>
+			<label kind="synchronisation" x="457" y="-246">begin_command[i][ARM]!</label>
+			<label kind="assignment" x="457" y="-229">armSent[i] = true</label>
+			<nail x="467" y="-200"/>
+			<nail x="587" y="-200"/>
+		</transition>
+		<transition id="id106">
+			<source ref="id100"/>
+			<target ref="id101"/>
+			<label kind="guard" x="560" y="-59">forall (i : drone_id) cmdAccepted[i][ARM]</label>
+			<label kind="synchronisation" x="560" y="-42">hurry!</label>
+		</transition>
+		<transition id="id107">
+			<source ref="id100"/>
+			<target ref="id103"/>
+			<label kind="guard" x="400" y="110">exists (i : drone_id) (cmdDenied[i][ARM] || cmdFailed[i][ARM])</label>
+			<label kind="synchronisation" x="400" y="127">hurry!</label>
+			<nail x="527" y="170"/>
+		</transition>
+		<transition id="id108">
+			<source ref="id101"/>
+			<target ref="id101"/>
+			<label kind="select" x="797" y="-280">i : drone_id</label>
+			<label kind="guard" x="797" y="-263">!startSent[i]</label>
+			<label kind="synchronisation" x="797" y="-246">begin_command[i][START]!</label>
+			<label kind="assignment" x="797" y="-229">startSent[i] = true</label>
+			<nail x="807" y="-200"/>
+			<nail x="927" y="-200"/>
+		</transition>
+		<transition id="id109">
+			<source ref="id101"/>
+			<target ref="id102"/>
+			<label kind="guard" x="900" y="-59">forall (i : drone_id) cmdAccepted[i][START]</label>
+			<label kind="synchronisation" x="900" y="-42">hurry!</label>
+		</transition>
+		<transition id="id110">
+			<source ref="id101"/>
+			<target ref="id103"/>
+			<label kind="guard" x="877" y="40">exists (i : drone_id) (cmdDenied[i][START] || cmdFailed[i][START])</label>
+			<label kind="synchronisation" x="877" y="57">hurry!</label>
+		</transition>
 	</template>
 	<template>
 		<name>Network</name>
@@ -79,9 +197,12 @@ bool uploadDone[N];</declaration>
 drone_id drone_Peer = 0;
 //item index
 item_id sequence = 0;
-//four possible kinds: 0 = count, 1 = request, 2 = item, 3 = accepted ACK
+//command carried by a command-protocol message
+cmd_id command = 0;
+//kinds: 0 = count, 1 = request, 2 = item, 3 = accepted ACK (mission protocol)
+//       4 = COMMAND, 5 = COMMAND_ACK accepted, 6 = COMMAND_ACK denied (command protocol)
 //tells which deliver edge
-int[0,3] messageKind = 0;</declaration>
+int[0,6] messageKind = 0;</declaration>
 		<location id="id8" x="-561" y="-76">
 			<name x="-571" y="-110">Idle</name>
 		</location>
@@ -134,7 +255,7 @@ messageKind = 2, t = 0</label>
 			<target ref="id9"/>
 			<label kind="select" x="-416" y="-42">d: drone_id, s : item_id</label>
 			<label kind="synchronisation" x="-620" y="0">request_tx[d][s]?</label>
-			<label kind="assignment" x="-195" y="8">drone_Peer = d,sequence = 0, messageKind = 1, t = 0</label>
+			<label kind="assignment" x="-195" y="8">drone_Peer = d, sequence = s, messageKind = 1, t = 0</label>
 			<nail x="-42" y="8"/>
 		</transition>
 		<transition id="id16">
@@ -151,6 +272,78 @@ messageKind = 2, t = 0</label>
 			<label kind="synchronisation" x="-620" y="-17">count_tx[d]?</label>
 			<label kind="assignment" x="-187" y="-68">drone_Peer = d, t= 0, messageKind = 0</label>
 			<nail x="-42" y="-25"/>
+		</transition>
+		<transition id="id120">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="select" x="-425" y="229">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="-425" y="246">cmd_tx[d][c]?</label>
+			<label kind="assignment" x="-425" y="263">drone_Peer = d, command = c, messageKind = 4, t = 0</label>
+			<nail x="-34" y="246"/>
+		</transition>
+		<transition id="id121">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="select" x="-425" y="297">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="-425" y="314">accepted_tx[d][c]?</label>
+			<label kind="assignment" x="-425" y="331">drone_Peer = d, command = c, messageKind = 5, t = 0</label>
+			<nail x="-34" y="314"/>
+		</transition>
+		<transition id="id122">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="select" x="-425" y="365">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="-425" y="382">denied_tx[d][c]?</label>
+			<label kind="assignment" x="-425" y="399">drone_Peer = d, command = c, messageKind = 6, t = 0</label>
+			<nail x="-34" y="382"/>
+		</transition>
+		<transition id="id123">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="153" y="-382">messageKind == 4 &amp;&amp; t &gt;= LINK_DELAY</label>
+			<label kind="synchronisation" x="153" y="-365">cmd_rx[drone_Peer][command]!</label>
+			<nail x="-42" y="-365"/>
+		</transition>
+		<transition id="id124">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="153" y="-450">messageKind == 5 &amp;&amp; t &gt;= LINK_DELAY</label>
+			<label kind="synchronisation" x="153" y="-433">accepted_rx[drone_Peer][command]!</label>
+			<nail x="-42" y="-433"/>
+		</transition>
+		<transition id="id125">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="153" y="-518">messageKind == 6 &amp;&amp; t &gt;= LINK_DELAY</label>
+			<label kind="synchronisation" x="153" y="-501">denied_rx[drone_Peer][command]!</label>
+			<nail x="-42" y="-501"/>
+		</transition>
+		<transition id="id126">
+			<source ref="id8"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-1020" y="-170">LOSSY</label>
+			<label kind="select" x="-1020" y="-153">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="-1020" y="-136">cmd_tx[d][c]?</label>
+			<nail x="-800" y="-160"/>
+			<nail x="-800" y="-110"/>
+		</transition>
+		<transition id="id127">
+			<source ref="id8"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-1020" y="-93">LOSSY</label>
+			<label kind="select" x="-1020" y="-76">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="-1020" y="-59">accepted_tx[d][c]?</label>
+			<nail x="-800" y="-85"/>
+			<nail x="-800" y="-35"/>
+		</transition>
+		<transition id="id128">
+			<source ref="id8"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-1020" y="-16">LOSSY</label>
+			<label kind="select" x="-1020" y="1">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="-1020" y="18">denied_tx[d][c]?</label>
+			<nail x="-800" y="-10"/>
+			<nail x="-800" y="40"/>
 		</transition>
 	</template>
 	<template>
@@ -182,6 +375,7 @@ int[0,MISSION_SIZE] receivedCount = 0;</declaration>
 			<source ref="id21"/>
 			<target ref="id22"/>
 			<label kind="synchronisation" x="178" y="187">ack_tx[id]!</label>
+			<label kind="assignment" x="130" y="229">missionInstalled[id] = true</label>
 		</transition>
 		<transition id="id24">
 			<source ref="id20"/>
@@ -265,6 +459,215 @@ nextSequence = nextSequence + 1</label>
 			<label kind="synchronisation" x="-374" y="-42">begin_upload[id]?</label>
 		</transition>
 	</template>
+	<template>
+		<name>CommandClient</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>// GCS side of the command protocol for drone id.
+// Sends one COMMAND and waits for its COMMAND_ACK.
+// No ACK after ACK_TIMEOUT: sends the COMMAND again (at most MAX_RETRY times),
+// then gives up in Failed.
+// Late ACKs (from an earlier try, arriving after a timeout) are accepted
+// and ignored by the loops, otherwise the network would stay blocked.
+
+// Command currently being handled
+cmd_id current = 0;
+// Re-sends done for the current command
+int[0,MAX_RETRY] retries = 0;
+// Time since the last send
+clock x;</declaration>
+		<location id="id200" x="0" y="0">
+			<name x="-30" y="-34">Idle</name>
+		</location>
+		<location id="id201" x="300" y="0">
+			<name x="270" y="-34">Sending</name>
+		</location>
+		<location id="id202" x="600" y="0">
+			<name x="570" y="-34">WaitAck</name>
+			<label kind="invariant" x="570" y="17">x &lt;= ACK_TIMEOUT</label>
+		</location>
+		<location id="id203" x="950" y="0">
+			<name x="920" y="-34">Failed</name>
+		</location>
+		<init ref="id200"/>
+		<transition id="id204">
+			<source ref="id200"/>
+			<target ref="id201"/>
+			<label kind="select" x="20" y="-70">c : cmd_id</label>
+			<label kind="synchronisation" x="20" y="-53">begin_command[id][c]?</label>
+			<label kind="assignment" x="20" y="-36">current = c, retries = 0</label>
+		</transition>
+		<transition id="id205">
+			<source ref="id201"/>
+			<target ref="id202"/>
+			<label kind="synchronisation" x="330" y="-36">cmd_tx[id][current]!</label>
+			<label kind="assignment" x="330" y="-19">x = 0</label>
+		</transition>
+		<transition id="id206">
+			<source ref="id202"/>
+			<target ref="id201"/>
+			<label kind="guard" x="330" y="-200">x &gt;= ACK_TIMEOUT &amp;&amp; retries &lt; MAX_RETRY</label>
+			<label kind="assignment" x="330" y="-183">retries++</label>
+			<nail x="600" y="-150"/>
+			<nail x="300" y="-150"/>
+		</transition>
+		<transition id="id207">
+			<source ref="id202"/>
+			<target ref="id203"/>
+			<label kind="guard" x="640" y="-53">x &gt;= ACK_TIMEOUT &amp;&amp; retries == MAX_RETRY</label>
+			<label kind="assignment" x="640" y="-36">cmdFailed[id][current] = true</label>
+		</transition>
+		<transition id="id208">
+			<source ref="id202"/>
+			<target ref="id200"/>
+			<label kind="synchronisation" x="180" y="145">accepted_rx[id][current]?</label>
+			<label kind="assignment" x="180" y="162">cmdAccepted[id][current] = true</label>
+			<nail x="600" y="140"/>
+			<nail x="0" y="140"/>
+		</transition>
+		<transition id="id209">
+			<source ref="id202"/>
+			<target ref="id200"/>
+			<label kind="synchronisation" x="180" y="265">denied_rx[id][current]?</label>
+			<label kind="assignment" x="180" y="282">cmdDenied[id][current] = true</label>
+			<nail x="600" y="260"/>
+			<nail x="0" y="260"/>
+		</transition>
+		<transition id="id210">
+			<source ref="id200"/>
+			<target ref="id200"/>
+			<label kind="select" x="-230" y="-60">c : cmd_id</label>
+			<label kind="synchronisation" x="-230" y="-43">accepted_rx[id][c]?</label>
+			<label kind="comment" x="-230" y="-26">late ACK: ignored</label>
+			<nail x="-60" y="-50"/>
+			<nail x="-60" y="-10"/>
+		</transition>
+		<transition id="id211">
+			<source ref="id200"/>
+			<target ref="id200"/>
+			<label kind="select" x="-230" y="10">c : cmd_id</label>
+			<label kind="synchronisation" x="-230" y="27">denied_rx[id][c]?</label>
+			<nail x="-60" y="10"/>
+			<nail x="-60" y="50"/>
+		</transition>
+		<transition id="id212">
+			<source ref="id201"/>
+			<target ref="id201"/>
+			<label kind="select" x="220" y="50">c : cmd_id</label>
+			<label kind="synchronisation" x="220" y="67">accepted_rx[id][c]?</label>
+			<nail x="270" y="50"/>
+			<nail x="330" y="50"/>
+		</transition>
+		<transition id="id213">
+			<source ref="id201"/>
+			<target ref="id201"/>
+			<label kind="select" x="220" y="90">c : cmd_id</label>
+			<label kind="synchronisation" x="220" y="107">denied_rx[id][c]?</label>
+			<nail x="260" y="90"/>
+			<nail x="340" y="90"/>
+		</transition>
+		<transition id="id214">
+			<source ref="id202"/>
+			<target ref="id202"/>
+			<label kind="select" x="660" y="50">c : cmd_id</label>
+			<label kind="guard" x="660" y="67">c != current</label>
+			<label kind="synchronisation" x="660" y="84">accepted_rx[id][c]?</label>
+			<nail x="640" y="50"/>
+			<nail x="640" y="100"/>
+		</transition>
+		<transition id="id215">
+			<source ref="id202"/>
+			<target ref="id202"/>
+			<label kind="select" x="660" y="110">c : cmd_id</label>
+			<label kind="guard" x="660" y="127">c != current</label>
+			<label kind="synchronisation" x="660" y="144">denied_rx[id][c]?</label>
+			<nail x="650" y="110"/>
+			<nail x="650" y="160"/>
+		</transition>
+		<transition id="id216">
+			<source ref="id203"/>
+			<target ref="id203"/>
+			<label kind="select" x="1000" y="-60">c : cmd_id</label>
+			<label kind="synchronisation" x="1000" y="-43">accepted_rx[id][c]?</label>
+			<nail x="1010" y="-50"/>
+			<nail x="1010" y="-10"/>
+		</transition>
+		<transition id="id217">
+			<source ref="id203"/>
+			<target ref="id203"/>
+			<label kind="select" x="1000" y="10">c : cmd_id</label>
+			<label kind="synchronisation" x="1000" y="27">denied_rx[id][c]?</label>
+			<nail x="1010" y="10"/>
+			<nail x="1010" y="50"/>
+		</transition>
+	</template>
+	<template>
+		<name>CommandServer</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>// Drone side of the command protocol for drone id.
+// Checks a received COMMAND and answers with COMMAND_ACK.
+// A COMMAND that arrives while the previous one is still being answered
+// (a re-send after a timeout) is ignored: the answer on its way covers it.
+
+// Command currently being handled
+cmd_id current = 0;
+
+// Can the drone execute this command now?
+bool canExecute(cmd_id c) {
+    if (c == ARM) {
+        return missionInstalled[id];   // ARM: a mission must be installed
+    }
+    return armed[id];                  // START: the drone must be armed
+}
+
+// Effect of an accepted command on the real drone state
+void execute(cmd_id c) {
+    if (c == ARM) {
+        armed[id] = true;
+    } else {
+        started[id] = true;
+    }
+}</declaration>
+		<location id="id300" x="0" y="0">
+			<name x="-30" y="-34">Idle</name>
+		</location>
+		<location id="id301" x="350" y="0">
+			<name x="320" y="-34">Decide</name>
+		</location>
+		<init ref="id300"/>
+		<transition id="id302">
+			<source ref="id300"/>
+			<target ref="id301"/>
+			<label kind="select" x="40" y="-70">c : cmd_id</label>
+			<label kind="synchronisation" x="40" y="-53">cmd_rx[id][c]?</label>
+			<label kind="assignment" x="40" y="-36">current = c</label>
+		</transition>
+		<transition id="id303">
+			<source ref="id301"/>
+			<target ref="id300"/>
+			<label kind="guard" x="80" y="-250">canExecute(current)</label>
+			<label kind="synchronisation" x="80" y="-233">accepted_tx[id][current]!</label>
+			<label kind="assignment" x="80" y="-216">execute(current)</label>
+			<nail x="350" y="-180"/>
+			<nail x="0" y="-180"/>
+		</transition>
+		<transition id="id304">
+			<source ref="id301"/>
+			<target ref="id300"/>
+			<label kind="guard" x="80" y="155">!canExecute(current)</label>
+			<label kind="synchronisation" x="80" y="172">denied_tx[id][current]!</label>
+			<nail x="350" y="150"/>
+			<nail x="0" y="150"/>
+		</transition>
+		<transition id="id305">
+			<source ref="id301"/>
+			<target ref="id301"/>
+			<label kind="select" x="420" y="-30">c : cmd_id</label>
+			<label kind="synchronisation" x="420" y="-13">cmd_rx[id][c]?</label>
+			<label kind="comment" x="420" y="4">duplicate: ignored</label>
+			<nail x="410" y="-30"/>
+			<nail x="410" y="30"/>
+		</transition>
+	</template>
 	<system>
 
 Supervisor = GCSSupervisor();
@@ -279,29 +682,82 @@ Drone2 =MissionReceiver(2);
 
 Link = Network();
 
+// CommandClient and CommandServer are instantiated automatically
+// for every drone_id: CommandClient(0), CommandClient(1), ...
 system Supervisor,
-       Sender0, Sender1, Sender2, Drone0, Drone1, Drone2, Link;</system>
+       Sender0, Sender1, Sender2, Drone0, Drone1, Drone2, Link,
+       CommandClient, CommandServer;</system>
 	<queries>
 		<query>
 			<formula>A[] (Sender0.SendItem imply Drone0.WaitItem)</formula>
-			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-11-17 20:52:09 +0800">
-			</result>
+			<comment>(Jason, model 02) Mission: the GCS only sends an item when the drone waits for it.</comment>
 		</query>
 		<query>
-			<formula>A[] (Drone0.HaveCount imply
+			<formula>A[] (Drone0.RequestedItem imply
      Drone0.expectedCount == MISSION_SIZE)</formula>
-			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-11-18 17:17:45 +0800">
-			</result>
+			<comment>(Jason, model 02) HaveCount renamed RequestedItem: after the count, the drone expects MISSION_SIZE items.</comment>
 		</query>
 		<query>
 			<formula>E&lt;&gt; (Sender0.SendItem &amp;&amp;
      Sender1.SendItem &amp;&amp;
      Sender2.SendItem)</formula>
-			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-11-18 17:18:22 +0800">
-			</result>
+			<comment>(Jason, model 02) The three uploads can run at the same time.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Supervisor.Prepared</formula>
+			<comment>Every mission can be uploaded. Was NOT satisfied in 02 (Network bug sequence = 0, fixed here: sequence = s).</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Supervisor.Done</formula>
+			<comment>Reachability: every drone can be armed and started.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Supervisor.Aborted</formula>
+			<comment>Reachability: the command phase can abort. Expected: NOT satisfied when LOSSY = false (every mission is installed, so no command is ever denied), satisfied when LOSSY = true (Failed).</comment>
+		</query>
+		<query>
+			<formula>A[] (deadlock imply (Supervisor.Done || Supervisor.Aborted))</formula>
+			<comment>The only blocking states are the two normal ends (no timelock, no blocked network).</comment>
+		</query>
+		<query>
+			<formula>A[] forall (i : drone_id) (armed[i] imply missionInstalled[i])</formula>
+			<comment>Safety: no drone is armed without an installed mission.</comment>
+		</query>
+		<query>
+			<formula>A[] forall (i : drone_id) (started[i] imply armed[i])</formula>
+			<comment>Safety: no drone starts without being armed.</comment>
+		</query>
+		<query>
+			<formula>A[] (Supervisor.Done imply forall (i : drone_id) started[i])</formula>
+			<comment>Safety: the GCS reports success only if every drone really started.</comment>
+		</query>
+		<query>
+			<formula>CommandClient(0).WaitAck --&gt; (CommandClient(0).Idle || CommandClient(0).Failed)</formula>
+			<comment>Liveness: every command sent to drone 0 ends, with an answer or with Failed.</comment>
+		</query>
+		<query>
+			<formula>Supervisor.Prepared --&gt; (Supervisor.Done || Supervisor.Aborted)</formula>
+			<comment>Liveness: once the missions are uploaded, the command phase always ends.</comment>
+		</query>
+		<query>
+			<formula>armed[0] --&gt; cmdAccepted[0][ARM]</formula>
+			<comment>Liveness: if drone 0 is armed, the GCS eventually knows it. Expected: NOT satisfied when LOSSY = true (all the ACKs can be lost: a real limit of the protocol).</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; CommandClient(0).Failed</formula>
+			<comment>A command can fail after all its tries. Expected: NOT satisfied when LOSSY = false (ACK_TIMEOUT is long enough), satisfied when LOSSY = true.</comment>
+		</query>
+		<query>
+			<formula>A[] forall (i : drone_id) forall (c : cmd_id) !(cmdAccepted[i][c] &amp;&amp; cmdFailed[i][c])</formula>
+			<comment>Safety: the GCS never concludes both "accepted" and "failed" for the same command.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (cmdFailed[0][ARM] &amp;&amp; armed[0])</formula>
+			<comment>The GCS can believe ARM failed while drone 0 is really armed (only the ACKs were lost). Expected: NOT satisfied when LOSSY = false, satisfied when LOSSY = true.</comment>
+		</query>
+		<query>
+			<formula>sup{CommandClient(0).WaitAck} : CommandClient(0).x</formula>
+			<comment>Measure: the longest time drone 0's client waits for an ACK. Must stay below ACK_TIMEOUT when LOSSY = false, otherwise the timeout fires for nothing.</comment>
 		</query>
 	</queries>
 </nta>
