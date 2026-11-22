@@ -1,0 +1,58 @@
+Options for the verification:
+  Generating some trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1795340739
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at ./results/network_runs/delivery_trace.q:1
+ -- Formula is satisfied.
+ -- Showing witness trace:
+
+State:
+( Link.Idle Sender0.Prepare Sender1.Prepare Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=0 outgoing[0].src=0 outgoing[0].dst=0 outgoing[0].kind=0 outgoing[0].payload=0 outgoing[1].id=0 outgoing[1].src=0 outgoing[1].dst=0 outgoing[1].kind=0 outgoing[1].payload=0 incoming.id=0 incoming.src=0 incoming.dst=0 incoming.kind=0 incoming.payload=0 status[0]=0 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=0 expected[0].kind=0 expected[0].payload=0 expected[1].id=0 expected[1].src=0 expected[1].dst=0 expected[1].kind=0 expected[1].payload=0 expected[2].id=0 expected[2].src=0 expected[2].dst=0 expected[2].kind=0 expected[2].payload=0 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=0 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=0 pending[1]=0 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=0 delivered=0 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=0 Sender1.next=0 Link.x=0 Sender0.wait=0 Sender1.wait=0
+
+Transition:
+  Sender0.Prepare->Sender0.Waiting { 1, tau, outgoing[p].id := p * PACKETS_PER_PRODUCER + next, outgoing[p].src := p, outgoing[p].dst := 1 - p, outgoing[p].kind := p, outgoing[p].payload := next + 2 * p, expected[outgoing[p].id] := outgoing[p], pending[p] := true, wait := 0 }
+
+State:
+( Link.Idle Sender0.Waiting Sender1.Prepare Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=0 outgoing[0].src=0 outgoing[0].dst=1 outgoing[0].kind=0 outgoing[0].payload=0 outgoing[1].id=0 outgoing[1].src=0 outgoing[1].dst=0 outgoing[1].kind=0 outgoing[1].payload=0 incoming.id=0 incoming.src=0 incoming.dst=0 incoming.kind=0 incoming.payload=0 status[0]=0 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=1 expected[0].kind=0 expected[0].payload=0 expected[1].id=0 expected[1].src=0 expected[1].dst=0 expected[1].kind=0 expected[1].payload=0 expected[2].id=0 expected[2].src=0 expected[2].dst=0 expected[2].kind=0 expected[2].payload=0 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=0 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=1 pending[1]=0 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=0 delivered=0 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=0 Sender1.next=0 Link.x=0 Sender0.wait=0 Sender1.wait=0
+
+Transition:
+  Sender1.Prepare->Sender1.Waiting { 1, tau, outgoing[p].id := p * PACKETS_PER_PRODUCER + next, outgoing[p].src := p, outgoing[p].dst := 1 - p, outgoing[p].kind := p, outgoing[p].payload := next + 2 * p, expected[outgoing[p].id] := outgoing[p], pending[p] := true, wait := 0 }
+
+State:
+( Link.Idle Sender0.Waiting Sender1.Waiting Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=0 outgoing[0].src=0 outgoing[0].dst=1 outgoing[0].kind=0 outgoing[0].payload=0 outgoing[1].id=2 outgoing[1].src=1 outgoing[1].dst=0 outgoing[1].kind=1 outgoing[1].payload=2 incoming.id=0 incoming.src=0 incoming.dst=0 incoming.kind=0 incoming.payload=0 status[0]=0 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=1 expected[0].kind=0 expected[0].payload=0 expected[1].id=0 expected[1].src=0 expected[1].dst=0 expected[1].kind=0 expected[1].payload=0 expected[2].id=2 expected[2].src=1 expected[2].dst=0 expected[2].kind=1 expected[2].payload=2 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=0 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=1 pending[1]=1 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=0 delivered=0 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=0 Sender1.next=0 Link.x=0 Sender0.wait=0 Sender1.wait=0
+
+Transition:
+  Sender0.Waiting->Sender0.Prepare { next < PACKETS_PER_PRODUCER - 1, net_tx[p]!, pending[p] := false, next++ }
+  Link.Idle->Link.Transmitting { 1, net_tx[0]?, packet := outgoing[0], owner := 0, x := 0, status[outgoing[0].id] := 1, admitted++ }
+
+State:
+( Link.Transmitting Sender0.Prepare Sender1.Waiting Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=0 outgoing[0].src=0 outgoing[0].dst=1 outgoing[0].kind=0 outgoing[0].payload=0 outgoing[1].id=2 outgoing[1].src=1 outgoing[1].dst=0 outgoing[1].kind=1 outgoing[1].payload=2 incoming.id=0 incoming.src=0 incoming.dst=0 incoming.kind=0 incoming.payload=0 status[0]=1 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=1 expected[0].kind=0 expected[0].payload=0 expected[1].id=0 expected[1].src=0 expected[1].dst=0 expected[1].kind=0 expected[1].payload=0 expected[2].id=2 expected[2].src=1 expected[2].dst=0 expected[2].kind=1 expected[2].payload=2 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=0 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=0 pending[1]=1 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=1 delivered=0 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=1 Sender1.next=0 Link.x=0 Sender0.wait=0 Sender1.wait=0
+
+Transition:
+  Sender0.Prepare->Sender0.Waiting { 1, tau, outgoing[p].id := p * PACKETS_PER_PRODUCER + next, outgoing[p].src := p, outgoing[p].dst := 1 - p, outgoing[p].kind := p, outgoing[p].payload := next + 2 * p, expected[outgoing[p].id] := outgoing[p], pending[p] := true, wait := 0 }
+
+State:
+( Link.Transmitting Sender0.Waiting Sender1.Waiting Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=1 outgoing[0].src=0 outgoing[0].dst=1 outgoing[0].kind=0 outgoing[0].payload=1 outgoing[1].id=2 outgoing[1].src=1 outgoing[1].dst=0 outgoing[1].kind=1 outgoing[1].payload=2 incoming.id=0 incoming.src=0 incoming.dst=0 incoming.kind=0 incoming.payload=0 status[0]=1 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=1 expected[0].kind=0 expected[0].payload=0 expected[1].id=1 expected[1].src=0 expected[1].dst=1 expected[1].kind=0 expected[1].payload=1 expected[2].id=2 expected[2].src=1 expected[2].dst=0 expected[2].kind=1 expected[2].payload=2 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=0 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=1 pending[1]=1 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=1 delivered=0 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=1 Sender1.next=0 Link.x=0 Sender0.wait=0 Sender1.wait=0
+
+Delay: 1
+
+State:
+( Link.Transmitting Sender0.Waiting Sender1.Waiting Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=1 outgoing[0].src=0 outgoing[0].dst=1 outgoing[0].kind=0 outgoing[0].payload=1 outgoing[1].id=2 outgoing[1].src=1 outgoing[1].dst=0 outgoing[1].kind=1 outgoing[1].payload=2 incoming.id=0 incoming.src=0 incoming.dst=0 incoming.kind=0 incoming.payload=0 status[0]=1 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=1 expected[0].kind=0 expected[0].payload=0 expected[1].id=1 expected[1].src=0 expected[1].dst=1 expected[1].kind=0 expected[1].payload=1 expected[2].id=2 expected[2].src=1 expected[2].dst=0 expected[2].kind=1 expected[2].payload=2 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=0 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=1 pending[1]=1 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=1 delivered=0 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=1 Sender1.next=0 Link.x=1 Sender0.wait=1 Sender1.wait=1
+
+Transition:
+  Link.Transmitting->Link.Delivered { x >= D_MIN, net_rx[packet.dst]!, incoming := packet, consecutiveLoss[owner] := 0 }
+  Receiver1.Ready->Receiver1.Ready { 1, net_rx[id]?, integrityError := integrityError || status[incoming.id] != 1 || incoming.src != expected[incoming.id].src || incoming.dst != expected[incoming.id].dst || incoming.kind != expected[incoming.id].kind || incoming.payload != expected[incoming.id].payload || incoming.dst != id || deliveries[incoming.id] != 0, (deliveries[incoming.id])++, status[incoming.id] := 2, delivered++ }
+
+State:
+( Link.Delivered Sender0.Waiting Sender1.Waiting Receiver0.Ready Receiver1.Ready )
+outgoing[0].id=1 outgoing[0].src=0 outgoing[0].dst=1 outgoing[0].kind=0 outgoing[0].payload=1 outgoing[1].id=2 outgoing[1].src=1 outgoing[1].dst=0 outgoing[1].kind=1 outgoing[1].payload=2 incoming.id=0 incoming.src=0 incoming.dst=1 incoming.kind=0 incoming.payload=0 status[0]=2 status[1]=0 status[2]=0 status[3]=0 expected[0].id=0 expected[0].src=0 expected[0].dst=1 expected[0].kind=0 expected[0].payload=0 expected[1].id=1 expected[1].src=0 expected[1].dst=1 expected[1].kind=0 expected[1].payload=1 expected[2].id=2 expected[2].src=1 expected[2].dst=0 expected[2].kind=1 expected[2].payload=2 expected[3].id=0 expected[3].src=0 expected[3].dst=0 expected[3].kind=0 expected[3].payload=0 deliveries[0]=1 deliveries[1]=0 deliveries[2]=0 deliveries[3]=0 integrityError=0 pending[0]=1 pending[1]=1 consecutiveLoss[0]=0 consecutiveLoss[1]=0 admitted=1 delivered=1 lost=0 Link.packet.id=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.payload=0 Link.owner=0 Sender0.next=1 Sender1.next=0 Link.x=1 Sender0.wait=1 Sender1.wait=1
