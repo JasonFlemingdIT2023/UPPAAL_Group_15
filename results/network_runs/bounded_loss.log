@@ -1,0 +1,82 @@
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1795340738
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at /nta/queries/query[1]/formula
+ -- Formula: E<> delivered > 0
+ -- Formula is satisfied.
+
+Verifying formula 2 at /nta/queries/query[2]/formula
+ -- Formula: E<> lost > 0
+ -- Formula is satisfied.
+
+Verifying formula 3 at /nta/queries/query[3]/formula
+ -- Formula: E<> (pending[0] && pending[1] && Link.Transmitting)
+ -- Formula is satisfied.
+
+Verifying formula 4 at /nta/queries/query[4]/formula
+ -- Formula: A[] !integrityError
+ -- Formula is satisfied.
+
+Verifying formula 5 at /nta/queries/query[5]/formula
+ -- Formula: A[] forall (i : packet_id) deliveries[i] <= 1
+ -- Formula is satisfied.
+
+Verifying formula 6 at /nta/queries/query[6]/formula
+ -- Formula: A[] (admitted == delivered + lost + (Link.Transmitting ? 1 : 0))
+ -- Formula is satisfied.
+
+Verifying formula 7 at /nta/queries/query[7]/formula
+ -- Formula: A[] forall (i : packet_id) ((status[i] == 2) == (deliveries[i] == 1))
+ -- Formula is satisfied.
+
+Verifying formula 8 at /nta/queries/query[8]/formula
+ -- Formula: A[] ((Link.Delivered || Link.Lost) imply (Link.x >= D_MIN && Link.x <= D_MAX))
+ -- Formula is satisfied.
+
+Verifying formula 9 at /nta/queries/query[9]/formula
+ -- Formula: A[] (Link.Transmitting imply Link.x <= D_MAX)
+ -- Formula is satisfied.
+
+Verifying formula 10 at /nta/queries/query[10]/formula
+ -- Formula: Link.Transmitting --> Link.Idle
+ -- Formula is satisfied.
+
+Verifying formula 11 at /nta/queries/query[11]/formula
+ -- Formula: A[] (deadlock imply (Sender0.Done && Sender1.Done && Link.Idle && delivered + lost == N_PACKETS))
+ -- Formula is satisfied.
+
+Verifying formula 12 at /nta/queries/query[12]/formula
+ -- Formula: E<> (delivered == N_PACKETS)
+ -- Formula is satisfied.
+
+Verifying formula 13 at /nta/queries/query[13]/formula
+ -- Formula: A<> (delivered + lost == N_PACKETS)
+ -- Formula is satisfied.
+
+Verifying formula 14 at /nta/queries/query[14]/formula
+ -- Formula: A[] (LOSS_MODE != 2 || !((status[0] == 3 && status[1] == 3) || (status[2] == 3 && status[3] == 3)))
+ -- Formula is satisfied.
+
+Verifying formula 15 at /nta/queries/query[15]/formula
+ -- Formula: E<> lost == N_PACKETS
+ -- Formula is NOT satisfied.
+
+Verifying formula 16 at /nta/queries/query[16]/formula
+ -- Formula: A[] forall (i : packet_id) (status[i] == 1 imply (Link.Transmitting && Link.packet.id == i))
+ -- Formula is satisfied.
+
+Verifying formula 17 at /nta/queries/query[17]/formula
+ -- Formula: A[] forall (i : packet_id) (status[i] == 3 imply deliveries[i] == 0)
+ -- Formula is satisfied.
+
+Verifying formula 18 at /nta/queries/query[18]/formula
+ -- Formula: sup{Sender1.Waiting} : Sender1.wait
+ -- Formula is satisfied.
+sup: 9:
+Sender1.wait <= 9
+
