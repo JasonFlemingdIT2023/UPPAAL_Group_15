@@ -1,5 +1,23 @@
 # AI usage log
 
+## PacketNetwork diagram layout (23 November 2026 - Jason)
+
+I asked AI to make the `PacketNetwork` diagram in `06B_simple_integration.xml` clearer by separating the edges and positioning their labels, without changing functionality or complexity. Only diagram coordinates and edge routing were changed.
+
+Chat evidence - my prompt:
+
+> Take a look over the current PacketNetwork Template and make it more structured regarding the Edges. Dont change anything regarding complexity or function. Just make the structure more clear and seperated and also the position of the Edge Declarations.
+
+Answer:
+
+>Rearranged PacketNetwork in [06B_simple_integration.xml](/Users/Win11Pro/Development/repos/FL_UPPAAL_Group_15/models/06B_simple_integration.xml):
+>- Acceptance edges on the left; matching delivery edges on the right.
+>- Mission, command and heartbeat edges grouped with spacing.
+>- Edge labels aligned in separate rows.
+>- Loss and return paths below the main diagram.
+>Only positions and edge routing changed. I checked that all declarations, guards, synchronisations, updates and model structure remain unchanged.
+>Reload the file in UPPAAL to see the layout.
+
 ## Network timing (20 November 2026)
 
 I used AI to help turn my network requirements into the first UPPAAL XML and test harness, including the clock guard and delay limit.

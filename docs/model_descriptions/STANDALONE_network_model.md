@@ -12,7 +12,7 @@ This file is only about the network part, so it doesn't answer the whole questio
 
 ## The four locations
 
-![The standalone network template in the UPPAAL editor](../results/Pictures/network_model_standalone.jpg)
+![The standalone network template in the UPPAAL editor](../../results/Pictures/network_model_standalone.jpg)
 
 This is the network template in the editor, not a verification result.
 
