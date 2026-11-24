@@ -11,5 +11,6 @@ Group Assignment: Formal Methods of Software Engineering
 | [Bug and event record](docs/events_and_bugs.md) | Issues, fixes and observations |
 | [Architecture decisions](docs/architecture_and_modeling_decisions.md) | MAVLink grounding, assumptions and design trade-offs |
 | [Experiments and property guide](docs/experiments_and_property_guide.md) | Team testing plan, starter queries and reproducibility |
+| [Detailed experiment plan](docs/experiment_plan_and_results.md) | Independent experiment packages, measurements and evidence format |
 
 The current main candidate is [08_final_version.xml](models/08_final_version.xml). Its description separates model assumptions from verification results.

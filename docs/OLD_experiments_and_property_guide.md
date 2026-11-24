@@ -39,3 +39,7 @@ Also what happends when we include more drones. What happends regarding the stae
 
 
 
+
+## Detailed experiment packages
+
+See [Experiment plan and result collection](experiment_plan_and_results.md) for the concrete scaling, delay/timeout, loss, retry, heartbeat and delayed-ACK comparisons and a common result-recording format.
