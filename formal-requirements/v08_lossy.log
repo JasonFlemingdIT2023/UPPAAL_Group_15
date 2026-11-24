@@ -1,0 +1,115 @@
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1795505661
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at queries/base_model_queries:5
+ -- Formula is satisfied.
+
+Verifying formula 2 at queries/base_model_queries:8
+ -- Throughput: 211553 states/sec, Load: 3389 states
+ -- Formula is satisfied.
+
+Verifying formula 3 at queries/base_model_queries:9
+ -- Throughput: 214134 states/sec, Load: 3516 states
+ -- Formula is satisfied.
+
+Verifying formula 4 at queries/base_model_queries:10
+ -- Throughput: 202447 states/sec, Load: 2764 states
+ -- Formula is satisfied.
+
+Verifying formula 5 at queries/base_model_queries:13
+ -- Throughput: 210371 states/sec, Load: 2787 states
+ -- Formula is satisfied.
+
+Verifying formula 6 at queries/base_model_queries:16
+ -- Throughput: 191808 states/sec, Load: 3856 states
+ -- Formula is satisfied.
+
+Verifying formula 7 at queries/base_model_queries:19
+ -- Throughput: 215788 states/sec, Load: 3609 states
+ -- Formula is satisfied.
+
+Verifying formula 8 at queries/base_model_queries:22
+ -- Throughput: 215341 states/sec, Load: 3568 states
+ -- Formula is satisfied.
+
+Verifying formula 9 at queries/base_model_queries:25
+ -- Throughput: 213920 states/sec, Load: 3314 states
+ -- Formula is satisfied.
+
+Verifying formula 10 at queries/base_model_queries:28
+ -- Throughput: 206126 states/sec, Load: 2710 states
+ -- Formula is satisfied.
+
+Verifying formula 11 at queries/base_model_queries:31
+ -- Throughput: 197142 states/sec, Load: 5632 states
+ -- Formula is satisfied.
+
+Verifying formula 12 at queries/base_model_queries:32
+ -- Throughput: 187992 states/sec, Load: 3692 states
+ -- Throughput: 173867 states/sec, Load: 5879 states
+ -- Throughput: 166375 states/sec, Load: 3656 states
+ -- Formula is satisfied.
+
+Verifying formula 13 at queries/base_model_queries:33
+ -- Throughput: 185022 states/sec, Load: 3786 states
+ -- Throughput: 171951 states/sec, Load: 5909 states
+ -- Throughput: 167001 states/sec, Load: 3645 states
+ -- Formula is satisfied.
+
+Verifying formula 14 at queries/base_model_queries:34
+ -- Throughput: 182262 states/sec, Load: 3836 states
+ -- Throughput: 167687 states/sec, Load: 5899 states
+ -- Throughput: 168020 states/sec, Load: 3521 states
+ -- Formula is satisfied.
+
+Verifying formula 15 at queries/base_model_queries:37
+ -- Throughput: 199864 states/sec, Load: 4422 states
+ -- Formula is satisfied.
+
+Verifying formula 16 at queries/base_model_queries:40
+ -- Throughput: 218155 states/sec, Load: 4650 states
+ -- Throughput: 202252 states/sec, Load: 2485 states
+ -- Formula is satisfied.
+
+Verifying formula 17 at queries/base_model_queries:43
+ -- Throughput: 117859 states/sec, Load: 5846 states
+ -- Formula is satisfied.
+
+Verifying formula 18 at queries/base_model_queries:46
+ -- Throughput: 171142 states/sec, Load: 3 states
+ -- Throughput: 163887 states/sec, Load: 3 states
+ -- Throughput: 175798 states/sec, Load: 3 states
+ -- Throughput: 168333 states/sec, Load: 3 states
+ -- Throughput: 166001 states/sec, Load: 3116 states
+ -- Throughput: 182866 states/sec, Load: 2734 states
+ -- Formula is satisfied.
+
+Verifying formula 19 at queries/base_model_queries:49
+ -- Throughput: 212737 states/sec, Load: 3697 states
+ -- Formula is satisfied.
+
+Verifying formula 20 at queries/base_model_queries:52
+ -- Formula is satisfied.
+
+Verifying formula 21 at queries/base_model_queries:55
+ -- Formula is satisfied.
+
+Verifying formula 22 at queries/base_model_queries:58
+ -- Formula is satisfied.
+
+Verifying formula 23 at queries/base_model_queries:61
+ -- Formula is satisfied.
+
+Verifying formula 24 at queries/base_model_queries:64
+ -- Formula is satisfied.
+
+Verifying formula 25 at queries/base_model_queries:67
+ -- Formula is satisfied.
+
+Verifying formula 26 at queries/base_model_queries:70
+ -- Formula is satisfied.

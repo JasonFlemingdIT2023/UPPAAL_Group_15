@@ -1,0 +1,85 @@
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1795505520
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at queries/base_model_queries:5
+ -- Formula is satisfied.
+
+Verifying formula 2 at queries/base_model_queries:8
+ -- Formula is satisfied.
+
+Verifying formula 3 at queries/base_model_queries:9
+ -- Formula is satisfied.
+
+Verifying formula 4 at queries/base_model_queries:10
+ -- Formula is satisfied.
+
+Verifying formula 5 at queries/base_model_queries:13
+ -- Formula is satisfied.
+
+Verifying formula 6 at queries/base_model_queries:16
+ -- Formula is satisfied.
+
+Verifying formula 7 at queries/base_model_queries:19
+ -- Formula is satisfied.
+
+Verifying formula 8 at queries/base_model_queries:22
+ -- Formula is satisfied.
+
+Verifying formula 9 at queries/base_model_queries:25
+ -- Formula is satisfied.
+
+Verifying formula 10 at queries/base_model_queries:28
+ -- Formula is satisfied.
+
+Verifying formula 11 at queries/base_model_queries:31
+ -- Formula is satisfied.
+
+Verifying formula 12 at queries/base_model_queries:32
+ -- Formula is satisfied.
+
+Verifying formula 13 at queries/base_model_queries:33
+ -- Formula is satisfied.
+
+Verifying formula 14 at queries/base_model_queries:34
+ -- Formula is satisfied.
+
+Verifying formula 15 at queries/base_model_queries:37
+ -- Formula is satisfied.
+
+Verifying formula 16 at queries/base_model_queries:40
+ -- Formula is satisfied.
+
+Verifying formula 17 at queries/base_model_queries:43
+ -- Formula is satisfied.
+
+Verifying formula 18 at queries/base_model_queries:46
+ -- Formula is satisfied.
+
+Verifying formula 19 at queries/base_model_queries:49
+ -- Formula is satisfied.
+
+Verifying formula 20 at queries/base_model_queries:52
+ -- Formula is satisfied.
+
+Verifying formula 21 at queries/base_model_queries:55
+ -- Formula is NOT satisfied.
+
+Verifying formula 22 at queries/base_model_queries:58
+ -- Formula is NOT satisfied.
+
+Verifying formula 23 at queries/base_model_queries:61
+ -- Formula is NOT satisfied.
+
+Verifying formula 24 at queries/base_model_queries:64
+ -- Formula is NOT satisfied.
+
+Verifying formula 25 at queries/base_model_queries:67
+ -- Formula is satisfied.
+
+Verifying formula 26 at queries/base_model_queries:70
+ -- Formula is NOT satisfied.

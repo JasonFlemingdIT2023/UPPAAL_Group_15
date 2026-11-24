@@ -1,0 +1,70 @@
+// Group 15 v08 properties. See docs/property_catalog.md for requirements and evidence.
+// Run against the reliable reference and a separate LOSSY=true model copy.
+
+// R1
+A[] forall (i : drone_id) (uploadDone[i] imply missionInstalled[i])
+
+// R2
+A[] (((Drone0.RequestedItem or Drone0.WaitItem) imply Drone0.receivedCount == Drone0.nextSequence) and ((Drone0.AckPending or Drone0.Uploaded) imply Drone0.receivedCount == MISSION_SIZE))
+A[] (((Drone1.RequestedItem or Drone1.WaitItem) imply Drone1.receivedCount == Drone1.nextSequence) and ((Drone1.AckPending or Drone1.Uploaded) imply Drone1.receivedCount == MISSION_SIZE))
+A[] (((Drone2.RequestedItem or Drone2.WaitItem) imply Drone2.receivedCount == Drone2.nextSequence) and ((Drone2.AckPending or Drone2.Uploaded) imply Drone2.receivedCount == MISSION_SIZE))
+
+// R3
+A[] forall (i : drone_id) (armed[i] imply missionInstalled[i])
+
+// R4
+A[] forall (i : drone_id) (started[i] imply armed[i])
+
+// R5
+A[] ((exists (i : drone_id) Supervisor.armSent[i]) imply (forall (j : drone_id) uploadDone[j]))
+
+// R6
+A[] ((exists (i : drone_id) Supervisor.startSent[i]) imply (forall (j : drone_id) cmdAccepted[j][ARM]))
+
+// R7
+A[] (Supervisor.Done imply (forall (i : drone_id) (cmdAccepted[i][START] and started[i])))
+
+// R8
+A[] forall (i : drone_id) forall (c : cmd_id) (not (cmdAccepted[i][c] and cmdDenied[i][c]) and not (cmdAccepted[i][c] and cmdFailed[i][c]) and not (cmdDenied[i][c] and cmdFailed[i][c]))
+
+// R9
+A[] forall (i : drone_id) (CommandClient(i).WaitAck imply CommandClient(i).x <= ACK_TIMEOUT)
+CommandClient(0).WaitAck --> (CommandClient(0).Sending or CommandClient(0).Idle or CommandClient(0).Failed)
+CommandClient(1).WaitAck --> (CommandClient(1).Sending or CommandClient(1).Idle or CommandClient(1).Failed)
+CommandClient(2).WaitAck --> (CommandClient(2).Sending or CommandClient(2).Idle or CommandClient(2).Failed)
+
+// R10
+A[] ((Link.Delivered or Link.Lost) imply (Link.t >= D_MIN and Link.t <= D_MAX))
+
+// R11
+Link.Transmitting --> Link.Idle
+
+// R12
+A[] (deadlock imply ((Supervisor.Done or Supervisor.Aborted) and Link.Idle))
+
+// R13
+Supervisor.Arming --> (Supervisor.Done or Supervisor.Aborted)
+
+// R14
+A[] (Link.Transmitting imply (((Link.packet.kind == PK_COUNT or Link.packet.kind == PK_ITEM or Link.packet.kind == PK_COMMAND) and Link.packet.src == GCS_ENDPOINT and Link.packet.dst == Link.packet.peer + 1) or ((Link.packet.kind == PK_REQUEST or Link.packet.kind == PK_MISSION_ACK or Link.packet.kind == PK_ACCEPTED or Link.packet.kind == PK_DENIED) and Link.packet.src == Link.packet.peer + 1 and Link.packet.dst == GCS_ENDPOINT)))
+
+// D1
+E<> Supervisor.Done
+
+// D2
+E<> Link.Lost
+
+// D3
+E<> (armed[0] and cmdFailed[0][ARM])
+
+// D4
+E<> (Supervisor.Aborted and (exists (i : drone_id) started[i]))
+
+// D5
+E<> CommandClient(0).Failed
+
+// D6
+E<> (CommandClient(0).retries > 0)
+
+// D7
+E<> (cmdFailed[0][ARM] and not armed[0])
