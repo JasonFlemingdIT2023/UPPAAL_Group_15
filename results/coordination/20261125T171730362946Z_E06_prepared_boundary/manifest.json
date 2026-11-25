@@ -1,0 +1,16 @@
+{
+  "experiment_id": "E06_prepared_boundary",
+  "query": "A[] (Supervisor.Prepared imply (forall (i : drone_id) (uploadDone[i] && missionInstalled[i] && !armed[i] && !started[i] && !ackPending[i] && !Supervisor.armSent[i] && !Supervisor.startSent[i] && forall (c : cmd_id) (!cmdAccepted[i][c] && !cmdDenied[i][c] && !cmdFailed[i][c])) && (Link.Idle || Link.Delivered || (Link.Transmitting && Link.packet.kind == PK_HEARTBEAT)) && Sender0.Done && Drone0.Uploaded && CommandClient(0).Idle && CommandClient(0).current == ARM && CommandClient(0).retries == 0 && CommandServer(0).Idle && CommandServer(0).current == ARM && ((HBSender(0).Waiting && HBSender(0).period <= HB_PERIOD) || (HBSender(0).Pending && HBSender(0).period >= HB_PERIOD)) && Sender1.Done && Drone1.Uploaded && CommandClient(1).Idle && CommandClient(1).current == ARM && CommandClient(1).retries == 0 && CommandServer(1).Idle && CommandServer(1).current == ARM && ((HBSender(1).Waiting && HBSender(1).period <= HB_PERIOD) || (HBSender(1).Pending && HBSender(1).period >= HB_PERIOD)) && Sender2.Done && Drone2.Uploaded && CommandClient(2).Idle && CommandClient(2).current == ARM && CommandClient(2).retries == 0 && CommandServer(2).Idle && CommandServer(2).current == ARM && ((HBSender(2).Waiting && HBSender(2).period <= HB_PERIOD) || (HBSender(2).Pending && HBSender(2).period >= HB_PERIOD))))",
+  "base_model_sha256": "6cb855d06e3c6792194135dc796971279e605031007e3f362bc7519590869336",
+  "model_sha256": "6cb855d06e3c6792194135dc796971279e605031007e3f362bc7519590869336",
+  "query_sha256": "a94b5399eaf555fa76f5a3d30251b12046f32bc8215633d34e683879359ff7ef",
+  "source_model_sha256": "77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d",
+  "gui_model_sha256": "5fbbb9db04673a50e649cd7ede0ec284fb69ac407f6d9f99b29e840329754304",
+  "verifyta_sha256": "34078b392341d6565a04a30eef22ea027ffa68816620f0fb54f61600e71c3fe3",
+  "runner_sha256": "3e349a5130594c14b5aaef93b7ea55ff30ea2910af012ecbe2c1a0b293685a5e",
+  "state_representation": 3,
+  "time_limit_seconds": 120.0,
+  "memory_limit_bytes": 8589934592,
+  "concurrency_note": "May overlap extended direct verification; not a controlled runtime comparison.",
+  "structural_audit": "Original protocol templates recover exactly after removing bootstrap additions and restoring init refs."
+}

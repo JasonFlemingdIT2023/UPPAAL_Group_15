@@ -1,0 +1,132 @@
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134321764966Z_pilot
+RUN n1_dmax3_timeout24_legacy_both_retry0 P01
+RESULT n1_dmax3_timeout24_legacy_both_retry0 P01 satisfied 0.9018s
+RUN n1_dmax3_timeout24_legacy_both_retry0 P08
+RESULT n1_dmax3_timeout24_legacy_both_retry0 P08 satisfied 0.1263s
+RUN n1_dmax3_timeout24_legacy_both_retry0 P10
+RESULT n1_dmax3_timeout24_legacy_both_retry0 P10 satisfied 0.1258s
+RUN n1_dmax3_timeout24_legacy_both_retry0 P11
+RESULT n1_dmax3_timeout24_legacy_both_retry0 P11 satisfied 0.1236s
+RUN n1_dmax3_timeout24_legacy_both_retry0 P25
+RESULT n1_dmax3_timeout24_legacy_both_retry0 P25 not_satisfied 0.1249s
+COMPLETE 5 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134321764966Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134323861487Z_pilot
+RUN n1_dmax3_timeout24_legacy_both_retry1 P01
+RESULT n1_dmax3_timeout24_legacy_both_retry1 P01 satisfied 0.4027s
+RUN n1_dmax3_timeout24_legacy_both_retry1 P08
+RESULT n1_dmax3_timeout24_legacy_both_retry1 P08 satisfied 0.1242s
+RUN n1_dmax3_timeout24_legacy_both_retry1 P10
+RESULT n1_dmax3_timeout24_legacy_both_retry1 P10 satisfied 0.1262s
+RUN n1_dmax3_timeout24_legacy_both_retry1 P11
+RESULT n1_dmax3_timeout24_legacy_both_retry1 P11 satisfied 0.1256s
+RUN n1_dmax3_timeout24_legacy_both_retry1 P25
+RESULT n1_dmax3_timeout24_legacy_both_retry1 P25 not_satisfied 0.134s
+COMPLETE 5 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134323861487Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134325506192Z_pilot
+RUN n1_dmax3_timeout24_legacy_both_retry2 P01
+RESULT n1_dmax3_timeout24_legacy_both_retry2 P01 satisfied 0.3977s
+RUN n1_dmax3_timeout24_legacy_both_retry2 P08
+RESULT n1_dmax3_timeout24_legacy_both_retry2 P08 satisfied 0.1266s
+RUN n1_dmax3_timeout24_legacy_both_retry2 P10
+RESULT n1_dmax3_timeout24_legacy_both_retry2 P10 satisfied 0.1264s
+RUN n1_dmax3_timeout24_legacy_both_retry2 P11
+RESULT n1_dmax3_timeout24_legacy_both_retry2 P11 satisfied 0.1236s
+RUN n1_dmax3_timeout24_legacy_both_retry2 P25
+RESULT n1_dmax3_timeout24_legacy_both_retry2 P25 not_satisfied 0.1262s
+COMPLETE 5 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134325506192Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134327122582Z_pilot
+RUN n1_dmax3_timeout24_retry0 P01
+RESULT n1_dmax3_timeout24_retry0 P01 satisfied 0.433s
+RUN n1_dmax3_timeout24_retry0 P08
+RESULT n1_dmax3_timeout24_retry0 P08 not_satisfied 0.1261s
+RUN n1_dmax3_timeout24_retry0 P15
+RESULT n1_dmax3_timeout24_retry0 P15 not_satisfied 0.1256s
+RUN n1_dmax3_timeout24_retry0 P25
+RESULT n1_dmax3_timeout24_retry0 P25 satisfied 0.1256s
+COMPLETE 4 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134327122582Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134328582191Z_pilot
+RUN n1_dmax3_timeout24_retry1 P01
+RESULT n1_dmax3_timeout24_retry1 P01 satisfied 0.4855s
+RUN n1_dmax3_timeout24_retry1 P08
+RESULT n1_dmax3_timeout24_retry1 P08 not_satisfied 0.1252s
+RUN n1_dmax3_timeout24_retry1 P15
+RESULT n1_dmax3_timeout24_retry1 P15 not_satisfied 0.125s
+RUN n1_dmax3_timeout24_retry1 P25
+RESULT n1_dmax3_timeout24_retry1 P25 satisfied 0.1254s
+COMPLETE 4 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134328582191Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134330077724Z_pilot
+RUN n1_dmax3_timeout24_retry2 P01
+RESULT n1_dmax3_timeout24_retry2 P01 satisfied 0.3962s
+RUN n1_dmax3_timeout24_retry2 P08
+RESULT n1_dmax3_timeout24_retry2 P08 not_satisfied 0.1254s
+RUN n1_dmax3_timeout24_retry2 P15
+RESULT n1_dmax3_timeout24_retry2 P15 not_satisfied 0.1257s
+RUN n1_dmax3_timeout24_retry2 P25
+RESULT n1_dmax3_timeout24_retry2 P25 satisfied 0.1237s
+COMPLETE 4 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134330077724Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134331489450Z_pilot
+RUN n3_dmax3_timeout24_retry0 P01
+RESULT n3_dmax3_timeout24_retry0 P01 satisfied 0.4244s
+RUN n3_dmax3_timeout24_retry0 P08
+RESULT n3_dmax3_timeout24_retry0 P08 not_satisfied 0.126s
+RUN n3_dmax3_timeout24_retry0 P15
+RESULT n3_dmax3_timeout24_retry0 P15 not_satisfied 0.126s
+RUN n3_dmax3_timeout24_retry0 P25
+RESULT n3_dmax3_timeout24_retry0 P25 satisfied 0.1251s
+COMPLETE 4 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134331489450Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134332949170Z_pilot
+RUN n3_dmax3_timeout24_retry1 P01
+RESULT n3_dmax3_timeout24_retry1 P01 satisfied 0.9087s
+RUN n3_dmax3_timeout24_retry1 P08
+RESULT n3_dmax3_timeout24_retry1 P08 not_satisfied 0.1235s
+RUN n3_dmax3_timeout24_retry1 P15
+RESULT n3_dmax3_timeout24_retry1 P15 not_satisfied 0.124s
+RUN n3_dmax3_timeout24_retry1 P25
+RESULT n3_dmax3_timeout24_retry1 P25 satisfied 0.1263s
+COMPLETE 4 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134332949170Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134334881520Z_pilot
+RUN n3_dmax3_timeout24_retry2 P01
+RESULT n3_dmax3_timeout24_retry2 P01 satisfied 0.3826s
+RUN n3_dmax3_timeout24_retry2 P08
+RESULT n3_dmax3_timeout24_retry2 P08 not_satisfied 0.1248s
+RUN n3_dmax3_timeout24_retry2 P15
+RESULT n3_dmax3_timeout24_retry2 P15 not_satisfied 0.1238s
+RUN n3_dmax3_timeout24_retry2 P25
+RESULT n3_dmax3_timeout24_retry2 P25 satisfied 0.1247s
+COMPLETE 4 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134334881520Z_pilot
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134336285235Z_E04
+RUN n3_dmax3_timeout14_legacy_both_budget0_retry0 P01
+RESULT n3_dmax3_timeout14_legacy_both_budget0_retry0 P01 satisfied 0.4s
+RUN n3_dmax3_timeout14_legacy_both_budget0_retry0 P08
+RESULT n3_dmax3_timeout14_legacy_both_budget0_retry0 P08 satisfied 0.1237s
+RUN n3_dmax3_timeout14_legacy_both_budget0_retry0 P10
+RESULT n3_dmax3_timeout14_legacy_both_budget0_retry0 P10 satisfied 0.1249s
+RUN n3_dmax3_timeout14_legacy_both_budget0_retry0 P15
+RESULT n3_dmax3_timeout14_legacy_both_budget0_retry0 P15 satisfied 0.1256s
+RUN n3_dmax3_timeout14_legacy_both_budget0_retry0 P25
+RESULT n3_dmax3_timeout14_legacy_both_budget0_retry0 P25 not_satisfied 0.1247s
+COMPLETE 5 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134336285235Z_E04
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134337907596Z_E04
+RUN n1_dmax3_timeout24_legacy_both_budget0_retry0 P26
+RESULT n1_dmax3_timeout24_legacy_both_budget0_retry0 P26 not_satisfied 0.4524s
+COMPLETE 1 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134337907596Z_E04
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134338900410Z_E04
+RUN n3_dmax3_timeout24_legacy_both_budget0_retry0 P26
+RESULT n3_dmax3_timeout24_legacy_both_budget0_retry0 P26 not_satisfied 1.7386s
+COMPLETE 1 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134338900410Z_E04
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134341195424Z_E04
+RUN n1_dmax3_timeout24_legacy_both_budget2_retry2 P28
+RESULT n1_dmax3_timeout24_legacy_both_budget2_retry2 P28 satisfied 0.4295s
+COMPLETE 1 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134341195424Z_E04
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134342165749Z_E04
+RUN n1_dmax3_timeout24_legacy_both_budget2_retry1 P11
+RESULT n1_dmax3_timeout24_legacy_both_budget2_retry1 P11 satisfied 0.3982s
+COMPLETE 1 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134342165749Z_E04
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134343110665Z_E04
+RUN n1_dmax3_timeout24_legacy_both_budget1_retry0 P10
+RESULT n1_dmax3_timeout24_legacy_both_budget1_retry0 P10 satisfied 0.4279s
+COMPLETE 1 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134343110665Z_E04
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134344086554Z_E04
+RUN n3_dmax3_timeout14_legacy_both_budget0_retry0 P08
+RESULT n3_dmax3_timeout14_legacy_both_budget0_retry0 P08 satisfied 0.3746s
+COMPLETE 1 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T134344086554Z_E04

@@ -1,0 +1,158 @@
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T151946383393Z_E06
+RUN n1_dmax3_timeout14_scheduler_original P01
+RESULT n1_dmax3_timeout14_scheduler_original P01 satisfied 0.9509s
+RUN n1_dmax3_timeout14_scheduler_original P03
+RESULT n1_dmax3_timeout14_scheduler_original P03 satisfied 0.1232s
+RUN n1_dmax3_timeout14_scheduler_original P05
+RESULT n1_dmax3_timeout14_scheduler_original P05 satisfied 0.1228s
+RUN n1_dmax3_timeout14_scheduler_original P06
+RESULT n1_dmax3_timeout14_scheduler_original P06 satisfied 0.1251s
+RUN n1_dmax3_timeout14_scheduler_original P15
+RESULT n1_dmax3_timeout14_scheduler_original P15 not_satisfied 0.1251s
+RUN n1_dmax3_timeout14_scheduler_original P24
+RESULT n1_dmax3_timeout14_scheduler_original P24 satisfied 0.1242s
+RUN n1_dmax3_timeout14_scheduler_original P25
+RESULT n1_dmax3_timeout14_scheduler_original P25 satisfied 0.1244s
+RUN n1_dmax3_timeout14_scheduler_original P34
+RESULT n1_dmax3_timeout14_scheduler_original P34 satisfied 0.1272s
+RUN n1_dmax3_timeout14_scheduler_original P35
+RESULT n1_dmax3_timeout14_scheduler_original P35 satisfied 0.1241s
+RUN n1_dmax3_timeout14_scheduler_original P36
+RESULT n1_dmax3_timeout14_scheduler_original P36 satisfied 0.1254s
+RUN n1_dmax3_timeout14_scheduler_original P37
+RESULT n1_dmax3_timeout14_scheduler_original P37 not_satisfied 0.1252s
+RUN n1_dmax3_timeout14_scheduler_original P30
+RESULT n1_dmax3_timeout14_scheduler_original P30 satisfied 0.1256s
+COMPLETE 12 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T151946383393Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T151949965320Z_E06
+RUN n1_dmax3_timeout14_scheduler_ack_priority P01
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P01 satisfied 0.5832s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P03
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P03 satisfied 0.1256s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P05
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P05 satisfied 0.1234s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P06
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P06 satisfied 0.1238s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P15
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P15 not_satisfied 0.1252s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P24
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P24 satisfied 0.125s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P25
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P25 satisfied 0.1252s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P34
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P34 satisfied 0.1245s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P35
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P35 satisfied 0.1252s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P36
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P36 satisfied 0.1273s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P37
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P37 satisfied 0.1321s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P30
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P30 satisfied 0.1246s
+RUN n1_dmax3_timeout14_scheduler_ack_priority P29
+RESULT n1_dmax3_timeout14_scheduler_ack_priority P29 satisfied 0.1282s
+COMPLETE 13 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T151949965320Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T151953195620Z_E06
+RUN n2_dmax3_timeout14_scheduler_original P01
+RESULT n2_dmax3_timeout14_scheduler_original P01 satisfied 2.3032s
+RUN n2_dmax3_timeout14_scheduler_original P03
+RESULT n2_dmax3_timeout14_scheduler_original P03 satisfied 0.2808s
+RUN n2_dmax3_timeout14_scheduler_original P05
+RESULT n2_dmax3_timeout14_scheduler_original P05 satisfied 0.432s
+RUN n2_dmax3_timeout14_scheduler_original P06
+RESULT n2_dmax3_timeout14_scheduler_original P06 satisfied 0.583s
+RUN n2_dmax3_timeout14_scheduler_original P15
+RESULT n2_dmax3_timeout14_scheduler_original P15 not_satisfied 0.3287s
+RUN n2_dmax3_timeout14_scheduler_original P24
+RESULT n2_dmax3_timeout14_scheduler_original P24 satisfied 0.1238s
+RUN n2_dmax3_timeout14_scheduler_original P25
+RESULT n2_dmax3_timeout14_scheduler_original P25 satisfied 0.5828s
+RUN n2_dmax3_timeout14_scheduler_original P34
+RESULT n2_dmax3_timeout14_scheduler_original P34 satisfied 0.2834s
+RUN n2_dmax3_timeout14_scheduler_original P35
+RESULT n2_dmax3_timeout14_scheduler_original P35 satisfied 0.3276s
+RUN n2_dmax3_timeout14_scheduler_original P36
+RESULT n2_dmax3_timeout14_scheduler_original P36 not_satisfied 0.2265s
+RUN n2_dmax3_timeout14_scheduler_original P37
+RESULT n2_dmax3_timeout14_scheduler_original P37 not_satisfied 0.2249s
+RUN n2_dmax3_timeout14_scheduler_original P30
+RESULT n2_dmax3_timeout14_scheduler_original P30 satisfied 0.4319s
+RUN n2_dmax3_timeout14_scheduler_original P31
+RESULT n2_dmax3_timeout14_scheduler_original P31 satisfied 0.4265s
+COMPLETE 13 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T151953195620Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152000938363Z_E06
+RUN n2_dmax3_timeout14_scheduler_ack_priority P01
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P01 satisfied 2.0025s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P03
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P03 satisfied 0.2288s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P05
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P05 satisfied 0.3855s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P06
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P06 satisfied 0.4286s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P15
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P15 not_satisfied 0.2772s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P24
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P24 satisfied 0.1237s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P25
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P25 satisfied 0.3254s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P34
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P34 satisfied 0.2264s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P35
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P35 satisfied 0.2763s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P36
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P36 satisfied 0.2777s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P37
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P37 satisfied 0.2755s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P30
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P30 satisfied 0.379s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P31
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P31 satisfied 0.3809s
+RUN n2_dmax3_timeout14_scheduler_ack_priority P29
+RESULT n2_dmax3_timeout14_scheduler_ack_priority P29 satisfied 0.2281s
+COMPLETE 14 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152000938363Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152007911035Z_E06
+RUN n2_dmax3_timeout14_scheduler_observed P01
+RESULT n2_dmax3_timeout14_scheduler_observed P01 satisfied 2.3004s
+RUN n2_dmax3_timeout14_scheduler_observed P15
+RESULT n2_dmax3_timeout14_scheduler_observed P15 not_satisfied 0.2851s
+RUN n2_dmax3_timeout14_scheduler_observed P25
+RESULT n2_dmax3_timeout14_scheduler_observed P25 satisfied 0.5826s
+RUN n2_dmax3_timeout14_scheduler_observed P29
+RESULT n2_dmax3_timeout14_scheduler_observed P29 satisfied 0.328s
+RUN n2_dmax3_timeout14_scheduler_observed P30
+RESULT n2_dmax3_timeout14_scheduler_observed P30 satisfied 0.4293s
+RUN n2_dmax3_timeout14_scheduler_observed P31
+RESULT n2_dmax3_timeout14_scheduler_observed P31 satisfied 0.4309s
+RUN n2_dmax3_timeout14_scheduler_observed P35
+RESULT n2_dmax3_timeout14_scheduler_observed P35 satisfied 0.3284s
+RUN n2_dmax3_timeout14_scheduler_observed P36
+RESULT n2_dmax3_timeout14_scheduler_observed P36 not_satisfied 0.2266s
+RUN n2_dmax3_timeout14_scheduler_observed P37
+RESULT n2_dmax3_timeout14_scheduler_observed P37 not_satisfied 0.2293s
+RUN n2_dmax3_timeout14_scheduler_observed P34
+RESULT n2_dmax3_timeout14_scheduler_observed P34 satisfied 0.3325s
+COMPLETE 10 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152007911035Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152014418541Z_E06
+RUN n3_dmax3_timeout14_scheduler_original P35
+RESULT n3_dmax3_timeout14_scheduler_original P35 not_satisfied 2.8237s
+RUN n3_dmax3_timeout14_scheduler_original P34
+RESULT n3_dmax3_timeout14_scheduler_original P34 satisfied 0.1287s
+COMPLETE 2 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152014418541Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152018028812Z_E06
+RUN n3_dmax3_timeout14_scheduler_ack_priority P34
+RESULT n3_dmax3_timeout14_scheduler_ack_priority P34 satisfied 1.9929s
+RUN n3_dmax3_timeout14_scheduler_ack_priority P38
+RESULT n3_dmax3_timeout14_scheduler_ack_priority P38 satisfied 0.1324s
+COMPLETE 2 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152018028812Z_E06
+OUTPUT D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152022644420Z_E06
+RUN n3_dmax3_timeout14_scheduler_original P03
+RESULT n3_dmax3_timeout14_scheduler_original P03 satisfied 19.8023s
+RUN n3_dmax3_timeout14_scheduler_original P35
+RESULT n3_dmax3_timeout14_scheduler_original P35 maybe 5.5136s
+RUN n3_dmax3_timeout14_scheduler_original P30
+RESULT n3_dmax3_timeout14_scheduler_original P30 maybe 0.1326s
+RUN n3_dmax3_timeout14_scheduler_original P31
+RESULT n3_dmax3_timeout14_scheduler_original P31 maybe 0.1317s
+RUN n3_dmax3_timeout14_scheduler_original P32
+RESULT n3_dmax3_timeout14_scheduler_original P32 maybe 0.1338s
+COMPLETE 5 query invocations: D:\大学\研一\软件工程形式化\小组作业\UPPAAL_Group_15\results\coordination\20261125T152022644420Z_E06

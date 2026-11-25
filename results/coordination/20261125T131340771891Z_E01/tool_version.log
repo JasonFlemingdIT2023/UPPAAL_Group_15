@@ -1,0 +1,7 @@
+UPPAAL 5.1.0-beta6 (rev. B2736CEEF00F5237), October 2026
+Copyright (c) 2011 - 2026, Aalborg University.
+Copyright (c) 1995 - 2011, Uppsala University and Aalborg University.
+All rights reserved.
+Compiled using -DENABLE_TIGA -DMULTI_TERMINAL -DENABLE_TIGA_SMC -DENABLE_STORE_MINGRAPH -DTIGA_OTF_BUCHI -DENABLE_LSC 
+Built with Boost-1.79.0, LibXml2-2.11.5, xxHash-0.8.1, UTAP-2.1.0, UUtils-1.2.0, UDBM-2.0.11, UCDD-0.2.1, lease-2.5.2
+Licensed to Yaxuan Chen / Tongji University (tongji.edu.cn).

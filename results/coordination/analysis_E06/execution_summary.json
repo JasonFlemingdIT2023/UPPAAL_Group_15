@@ -1,0 +1,23 @@
+{
+  "invocations": 100,
+  "results": {
+    "satisfied": 73,
+    "timeout": 3,
+    "maybe": 10,
+    "not_satisfied": 14
+  },
+  "categories": {
+    "priority_exact_attempt": 3,
+    "priority_overapprox_safety": 5,
+    "priority_overapprox_core": 11,
+    "priority_exact_lu": 1,
+    "small_exact": 52,
+    "instrumentation_control": 10,
+    "diagnostics": 4,
+    "original_overapprox": 5,
+    "progress_decomposition": 6,
+    "original_counterexamples": 3
+  },
+  "source_model_sha256": "77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d",
+  "supplementary_completion_proof": "completion_proof.json (separate from the historical 100 invocations)"
+}

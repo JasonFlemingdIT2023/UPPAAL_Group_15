@@ -1,0 +1,97 @@
+Options for the verification:
+  Generating some trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at query.q:2
+ -- Formula is satisfied.
+ -- States stored : 54 states
+ -- States explored : 39 states
+ -- CPU user time used : 0 ms
+ -- Virtual memory used : 71220 KiB
+ -- Resident memory used : 24424 KiB
+ -- Showing witness trace:
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Idle CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Unknown ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=0 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=0 CommandClient(0).x=0 CommandClient(1).x=0 HBSender(0).period=0 HBSender(1).period=0 ConnectionMonitor(0).age=0 ConnectionMonitor(1).age=0
+
+Delay: 20
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Idle CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Unknown ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=0 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=20 CommandClient(0).x=20 CommandClient(1).x=20 HBSender(0).period=20 HBSender(1).period=20 ConnectionMonitor(0).age=20 ConnectionMonitor(1).age=20
+
+Transition:
+  HBSender(0).Waiting->HBSender(0).Pending { period >= HB_PERIOD + firstOffset, tau, 1 }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Idle CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Pending HBSender(1).Waiting ConnectionMonitor(0).Unknown ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=0 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=20 CommandClient(0).x=20 CommandClient(1).x=20 HBSender(0).period=20 HBSender(1).period=20 ConnectionMonitor(0).age=20 ConnectionMonitor(1).age=20
+
+Transition:
+  HBSender(0).Pending->HBSender(0).Waiting { 1, heartbeat_tx[id]!, period := 0, firstOffset := 0 }
+  Link.Idle->Link.Transmitting { 1, heartbeat_tx[0]?, storePacket(0, PK_HEARTBEAT, 0, 0), t := 0 }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Transmitting CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Unknown ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=0 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=0 CommandClient(0).x=20 CommandClient(1).x=20 HBSender(0).period=0 HBSender(1).period=20 ConnectionMonitor(0).age=20 ConnectionMonitor(1).age=20
+
+Delay: 3
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Transmitting CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Unknown ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=0 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=3 CommandClient(0).x=23 CommandClient(1).x=23 HBSender(0).period=3 HBSender(1).period=23 ConnectionMonitor(0).age=23 ConnectionMonitor(1).age=23
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_HEARTBEAT && t >= D_MIN, heartbeat_rx[packet.peer]!, 1 }
+  ConnectionMonitor(0).Unknown->ConnectionMonitor(0).Tracking { 1, heartbeat_rx[id]?, age := 0, heartbeatSeen[id] := true }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Delivered CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Tracking ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=3 CommandClient(0).x=23 CommandClient(1).x=23 HBSender(0).period=3 HBSender(1).period=23 ConnectionMonitor(0).age=0 ConnectionMonitor(1).age=23
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Idle CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Tracking ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=3 CommandClient(0).x=23 CommandClient(1).x=23 HBSender(0).period=3 HBSender(1).period=23 ConnectionMonitor(0).age=0 ConnectionMonitor(1).age=23
+
+Delay: 7
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Idle CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Tracking ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=10 CommandClient(0).x=30 CommandClient(1).x=30 HBSender(0).period=10 HBSender(1).period=30 ConnectionMonitor(0).age=7 ConnectionMonitor(1).age=30
+
+Transition:
+  HBSender(1).Waiting->HBSender(1).Pending { period >= HB_PERIOD + firstOffset, tau, 1 }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Idle CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Pending ConnectionMonitor(0).Tracking ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=10 Link.t=10 CommandClient(0).x=30 CommandClient(1).x=30 HBSender(0).period=10 HBSender(1).period=30 ConnectionMonitor(0).age=7 ConnectionMonitor(1).age=30
+
+Transition:
+  HBSender(1).Pending->HBSender(1).Waiting { 1, heartbeat_tx[id]!, period := 0, firstOffset := 0 }
+  Link.Idle->Link.Transmitting { 1, heartbeat_tx[1]?, storePacket(1, PK_HEARTBEAT, 0, 0), t := 0 }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Transmitting CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Tracking ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=2 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=1 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=0 Link.t=0 CommandClient(0).x=30 CommandClient(1).x=30 HBSender(0).period=10 HBSender(1).period=0 ConnectionMonitor(0).age=7 ConnectionMonitor(1).age=30
+
+Delay: 1
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Transmitting CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Tracking ConnectionMonitor(1).Unknown )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=2 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=1 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=0 Link.t=1 CommandClient(0).x=31 CommandClient(1).x=31 HBSender(0).period=11 HBSender(1).period=1 ConnectionMonitor(0).age=8 ConnectionMonitor(1).age=31
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_HEARTBEAT && t >= D_MIN, heartbeat_rx[packet.peer]!, 1 }
+  ConnectionMonitor(1).Unknown->ConnectionMonitor(1).Tracking { 1, heartbeat_rx[id]?, age := 0, heartbeatSeen[id] := true }
+
+State:
+( Supervisor.Idle Sender0.Idle Sender1.Idle Drone0.WaitCount Drone1.WaitCount Link.Delivered CommandClient(0).Idle CommandClient(1).Idle CommandServer(0).Idle CommandServer(1).Idle HBSender(0).Waiting HBSender(1).Waiting ConnectionMonitor(0).Tracking ConnectionMonitor(1).Tracking )
+uploadDone[0]=0 uploadDone[1]=0 heartbeatSeen[0]=1 heartbeatSeen[1]=1 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdAccepted[1][0]=0 cmdAccepted[1][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdDenied[1][0]=0 cmdDenied[1][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 cmdFailed[1][0]=0 cmdFailed[1][1]=0 armed[0]=0 armed[1]=0 started[0]=0 started[1]=0 missionInstalled[0]=0 missionInstalled[1]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.armSent[1]=0 Supervisor.startSent[0]=0 Supervisor.startSent[1]=0 Sender0.requested=0 Sender1.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Drone1.expectedCount=0 Drone1.nextSequence=0 Drone1.receivedCount=0 Link.packet.src=2 Link.packet.dst=0 Link.packet.kind=7 Link.packet.peer=1 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandClient(1).current=0 CommandClient(1).retries=0 CommandServer(0).current=0 CommandServer(1).current=0 HBSender(0).firstOffset=0 HBSender(1).firstOffset=0 Link.t=1 CommandClient(0).x=31 CommandClient(1).x=31 HBSender(0).period=11 HBSender(1).period=1 ConnectionMonitor(0).age=8 ConnectionMonitor(1).age=0

@@ -1,0 +1,34 @@
+{
+  "N": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "D_MIN": 1,
+  "D_MAX": 3,
+  "ACK_TIMEOUT": 14,
+  "MAX_RETRY": 2,
+  "MISSION_SIZE": 3,
+  "LOSSY": false,
+  "heartbeat_active": false,
+  "properties": [
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P06",
+    "P07",
+    "P08",
+    "P09",
+    "P13",
+    "P14",
+    "P15",
+    "P16",
+    "P23"
+  ],
+  "repetitions": 3,
+  "time_limit_seconds": 120,
+  "sampled_rss_limit_gib": 8
+}
