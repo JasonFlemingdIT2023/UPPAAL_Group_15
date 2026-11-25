@@ -1,0 +1,98 @@
+[
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period40",
+    "property_id": "P01",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 40,
+    "wall_seconds": 2.4737,
+    "sampled_peak_rss_bytes": 33116160,
+    "explored_states": 98847,
+    "stored_states": 29052
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period40",
+    "property_id": "P03",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 40,
+    "wall_seconds": 0.5938,
+    "sampled_peak_rss_bytes": 35323904,
+    "explored_states": 124082,
+    "stored_states": 30455
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period40",
+    "property_id": "P08",
+    "result": "not_satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 40,
+    "wall_seconds": 0.5499,
+    "sampled_peak_rss_bytes": 34574336,
+    "explored_states": 124082,
+    "stored_states": 30455
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period40",
+    "property_id": "P24",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 40,
+    "wall_seconds": 0.1272,
+    "sampled_peak_rss_bytes": 16183296,
+    "explored_states": 71,
+    "stored_states": 95
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period20_staggered",
+    "property_id": "P01",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 2.2725,
+    "sampled_peak_rss_bytes": 27852800,
+    "explored_states": 44125,
+    "stored_states": 22831
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period20_staggered",
+    "property_id": "P03",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 0.2812,
+    "sampled_peak_rss_bytes": 29241344,
+    "explored_states": 49460,
+    "stored_states": 26697
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period20_staggered",
+    "property_id": "P08",
+    "result": "not_satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 0.2834,
+    "sampled_peak_rss_bytes": 29310976,
+    "explored_states": 49460,
+    "stored_states": 26697
+  },
+  {
+    "N": 2,
+    "configuration_id": "n2_dmax3_timeout14_hb_active_period20_staggered",
+    "property_id": "P24",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 0.1421,
+    "sampled_peak_rss_bytes": 17559552,
+    "explored_states": 39,
+    "stored_states": 54
+  }
+]

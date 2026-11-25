@@ -1,0 +1,10 @@
+{
+  "invocations": 392,
+  "matrix_invocations": 342,
+  "completed": true,
+  "matrix_wall_seconds_sum": 65.8817,
+  "matrix_wall_seconds_median": 0.18555,
+  "matrix_wall_seconds_max": 0.7327,
+  "matrix_sampled_rss_mib_max": 26.0078125,
+  "measurement_note": "Single invocation per configuration/query. Wall time includes launch/license overhead; sampled RSS is a peak lower bound. Liveness state/CPU statistics not used."
+}

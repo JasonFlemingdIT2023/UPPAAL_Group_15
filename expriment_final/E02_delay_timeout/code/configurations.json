@@ -1,0 +1,60 @@
+{
+  "source": "models/08_final_version.xml",
+  "N": 3,
+  "MISSION_SIZE": 3,
+  "D_MIN": 1,
+  "MAX_RETRY": 2,
+  "LOSSY": false,
+  "heartbeat_active": false,
+  "E02": [
+    {
+      "D_MAX": 2,
+      "ACK_TIMEOUT": 6
+    },
+    {
+      "D_MAX": 2,
+      "ACK_TIMEOUT": 14
+    },
+    {
+      "D_MAX": 2,
+      "ACK_TIMEOUT": 24
+    },
+    {
+      "D_MAX": 3,
+      "ACK_TIMEOUT": 6
+    },
+    {
+      "D_MAX": 3,
+      "ACK_TIMEOUT": 14
+    },
+    {
+      "D_MAX": 3,
+      "ACK_TIMEOUT": 24
+    },
+    {
+      "D_MAX": 5,
+      "ACK_TIMEOUT": 6
+    },
+    {
+      "D_MAX": 5,
+      "ACK_TIMEOUT": 14
+    },
+    {
+      "D_MAX": 5,
+      "ACK_TIMEOUT": 24
+    }
+  ],
+  "E02_properties": [
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P08",
+    "P09",
+    "P15"
+  ],
+  "limit_seconds": 120,
+  "memory_limit_gib": 8,
+  "repetitions": 3
+}

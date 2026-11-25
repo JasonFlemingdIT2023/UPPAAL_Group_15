@@ -1,0 +1,212 @@
+[
+  {
+    "N": 1,
+    "scheduler": "original",
+    "property": "P35",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "original",
+    "property": "P36",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "original",
+    "property": "P37",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "original",
+    "property": "HB_PROGRESS",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "original",
+    "property": "P25",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "ack_priority",
+    "property": "P35",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "ack_priority",
+    "property": "P36",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "ack_priority",
+    "property": "P37",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "ack_priority",
+    "property": "HB_PROGRESS",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 1,
+    "scheduler": "ack_priority",
+    "property": "P25",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "original",
+    "property": "P35",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "original",
+    "property": "P36",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "original",
+    "property": "P37",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "original",
+    "property": "HB_PROGRESS",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "original",
+    "property": "P25",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "ack_priority",
+    "property": "P35",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "ack_priority",
+    "property": "P36",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "ack_priority",
+    "property": "P37",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "ack_priority",
+    "property": "HB_PROGRESS",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 2,
+    "scheduler": "ack_priority",
+    "property": "P25",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "ack_priority",
+    "property": "P35",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "original",
+    "property": "P35",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "ack_priority",
+    "property": "P36",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "original",
+    "property": "P36",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "ack_priority",
+    "property": "P37",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "original",
+    "property": "P37",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "ack_priority",
+    "property": "HB_PROGRESS",
+    "result": "satisfied",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "original",
+    "property": "HB_PROGRESS",
+    "result": "maybe",
+    "basis": "Original 100-record study"
+  },
+  {
+    "N": 3,
+    "scheduler": "ack_priority",
+    "property": "P25",
+    "result": "satisfied",
+    "basis": "Prepared boundary plus exact continuation proof"
+  },
+  {
+    "N": 3,
+    "scheduler": "original",
+    "property": "P25",
+    "result": "not_satisfied",
+    "basis": "Original 100-record study"
+  }
+]
