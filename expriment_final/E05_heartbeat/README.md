@@ -34,9 +34,9 @@ Enable or disable HBSender and ConnectionMonitor through system composition. Fir
 
 ## 查询与预算 / Queries and budget
 
-P01、P03、P08、P24。精确 BFS 主实验与 DFS 补查，每条 120 秒、8 GiB。
+P01、P03、P08、P24。精确 BFS 主实验与 DFS 补查每条 120 秒、8 GiB。三机启用心跳的 P01、P03、P08 另做延长 BFS 检查，每条 600 秒、2 GiB。
 
-P01, P03, P08 and P24. Main runs use exact BFS, with separate DFS follow-ups. Each query has 120 s and 8 GiB.
+P01, P03, P08 and P24. Main runs use exact BFS, and the initial DFS follow-ups have the same 120 s and 8 GiB per-query limits. Extended BFS checks for P01, P03 and P08 use a 600 s, 2 GiB budget per query.
 
 ## 解释范围 / Interpretation
 

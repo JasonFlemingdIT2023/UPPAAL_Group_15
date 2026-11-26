@@ -1,5 +1,9 @@
 # AI usage log
 
+## E05 extended BFS checks (26 November 2026 - Chen, Codex assisted)
+
+Chen asked to follow up on the three LIMIT cells in the heartbeat-activation figure. Codex reran P01, P03 and P08 using the original model, queries and BFS options. The three concurrent searches each had a 600-second limit and a 2 GiB memory cap and reached the memory cap first. Codex matched the inputs to the earlier DFS witnesses for P01/P08 and the E06 safety proof for P03. It updated the figure to display the final property verdicts alongside the original fixed-budget cost measurements.
+
 ## E06 original-scheduling heartbeat follow-up (26 November 2026 - Chen, Codex assisted)
 
 Chen asked why eventual heartbeat admission was inconclusive under original scheduling and requested further verification. Codex checked the original UPPAAL verdicts, ran direct follow-ups, and verified packet progress (P06) and matching mission receivers (P46). It documented the finite-traffic argument that establishes P30–P32 for the tested three-drone configuration. Codex also expanded the six bilingual experiment reports and embedded the figures directly. The E06 results now report the matched P03 search counts and distinguish direct query outcomes from the proof of heartbeat progress.

@@ -12,6 +12,10 @@ For N=1, 2 and 3, we paired models built from the same version 08 source by enab
 
 ![心跳开关与验证成本 / Heartbeat activation and verification cost](results/figs/E05_activation.png)
 
+左上矩阵汇报最终判定。星号标出原来超时、后来获得结论的三条性质。其余三个面板保留原来统一使用 120 秒、8 GiB 上限的 BFS 测量，三机开启心跳的 P03 因此仍标出 120 秒截止和当时的内存用量。
+
+The upper-left panel shows final property verdicts. Asterisks mark the three properties resolved after the initial timeouts. The three cost panels retain the original BFS measurements with a 120 s, 8 GiB budget. They show the cutoff and the memory measured at that point for P03 with three drones and heartbeat enabled.
+
 ## 失败见证 / Failure witness
 
 三机见证中，START0 在 t=110 入网，t=113 送达。心跳、其他命令和重传占用后续链路时隙。t=150，ACK0 获得发送机会，服务端执行 START。t=152，客户端进入 Failed，ACK0 仍在传输，主管仍位于 Starting。 [原始轨迹事件](results/analysis/traffic_traces.md)
@@ -28,10 +32,18 @@ For N=2, P03 explored 53,314 states with heartbeat, about 92.6 times the 576 sta
 
 ![心跳周期和首次释放偏移对照 / Heartbeat period and first-release offset](results/figs/E05_settings.png)
 
-E05 的三机心跳开启 BFS 有三条超时，DFS 随后给出 P01 和 P08 的具体见证。P03 的 DFS 仍超时，E06 在相同原调度模型上用保守过近似证明了 P03。 [E05 原始记录](results/records.csv) · [E06 对照结果](../E06_ack_priority/results/analysis/original_overapprox_records.json)
+## 三机开启心跳的补充验证 / Three-drone heartbeat follow-up
 
-The three-drone BFS with heartbeat had three timeouts. DFS then found witnesses for P01 and P08. DFS also timed out on P03. E06 subsequently proved P03 using conservative over-approximation on the same original-scheduling model. [E05 records](results/records.csv) · [E06 control result](../E06_ack_priority/results/analysis/original_overapprox_records.json)
+对原图的 P01、P03、P08 使用逐字节相同的模型、查询和 BFS 选项重跑。三条并行运行，每条最多 600 秒和 2 GiB 采样 RSS，均先触及内存上限。下表同时给出延长搜索的停止情况和最终判定所用证据。 [补查记录](results/analysis/activation_followup.json)
 
-因此，E05 有四次单次运行超时，但三机心跳开启的三个相关问题都有后续结论：成功可达、确认失败可达、START 前置条件成立。原 BFS 超时仍保留在成本图中，因为它描述该次搜索的资源开销。
+We reran P01, P03 and P08 using byte-identical models and queries and the original BFS options. Each of the three concurrent searches had a 600 s time limit and a 2 GiB sampled RSS cap. All three reached the memory cap first. The table gives the stop reason and the evidence for each final property verdict. [Follow-up records](results/analysis/activation_followup.json)
 
-E05 therefore contains four timed-out invocations, while all three associated questions for the heartbeat-active three-drone model have follow-up answers. Success and confirmation failure are reachable, and START requires ARM. The BFS timeouts remain marked in the cost figure because they record the resource budget of those searches.
+| 查询 / Query | 延长 BFS / Extended BFS | 最终判定 / Final verdict | 判定证据 / Decisive evidence |
+|---|---|---|---|
+| P01 成功可达 / Success reachable | 585.11 s，内存上限 / memory cap | 真 / TRUE | 精确 DFS，0.62 s，找到 Done / exact DFS witness to Done |
+| P03 START 必须以 ARM 为前提 / START requires ARM | 588.00 s，内存上限 / memory cap | 真 / TRUE | E06 对同一模型的保守过近似，19.80 s / E06 conservative proof on the identical model |
+| P08 无人机 0 确认失败可达 / Drone 0 confirmation failure reachable | 584.21 s，内存上限 / memory cap | 真 / TRUE | 精确 DFS，0.94 s，找到 Failed / exact DFS witness to Failed |
+
+P01 和 P08 的见证是不同执行：有的调度能完成全队确认，有的调度会让无人机 0 耗尽重试。P03 则检查所有执行中的前置条件，E06 的同模型安全证明给出确定结果。 [逐查询记录](results/records.csv) · [P03 验证输出](results/analysis/P03_conservative_proof.txt)
+
+The P01 and P08 witnesses show different executions. Some schedules complete fleet coordination, while others exhaust the retries for drone 0. P03 checks the prerequisite across all executions. The E06 safety proof on the same model establishes this property. [Per-query results](results/records.csv) · [P03 verifier output](results/analysis/P03_conservative_proof.txt)

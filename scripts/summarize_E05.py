@@ -8,7 +8,6 @@ import xml.etree.ElementTree as ET
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 from summarize_E03 import trace_events
 from run_coordination_experiments import make_model, property_for
 
@@ -16,6 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'results/coordination'
 OUT = BASE / 'analysis_E05'
 IDS = ['P01', 'P03', 'P08', 'P24']
+sys.path.insert(0, str(ROOT/'expriment_final/E05_heartbeat/code'))
+from plot_activation import plot_activation
 
 def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def save(p, obj): p.write_text(json.dumps(obj, indent=2, ensure_ascii=False), encoding='utf-8')
@@ -47,6 +48,48 @@ def audit(p):
     assert (p.parent.parent/'model.xml').read_bytes() == expected_model.encode('utf-8')
     assert r['query'] == property_for(r['property_id'], r['N'])[1]
     return r
+
+
+def summarize_followup(index, baseline_rows):
+    """Keep the original cost observations and resolve verdicts from matched inputs."""
+    baseline = {r['property_id']: r for r in baseline_rows if r['N'] == 3 and r['heartbeat_mode'] == 'active'}
+    properties = {}
+    for pid, retry_path in index['extended_bfs'].items():
+        first = baseline[pid]
+        retry = audit(BASE/retry_path/'result.json')
+        prior_path = index['prior_decisive'][pid]
+        prior = audit(BASE/prior_path/'result.json')
+        assert first['result'] == 'timeout' and prior['result'] == 'satisfied'
+        assert all((r['model_sha256'], r['query_sha256']) == (first['model_sha256'], first['query_sha256'])
+                   for r in (retry, prior))
+        assert retry['search_options'] == first['search_options'] and not retry['trace_enabled']
+        assert retry['time_limit_seconds'] == index['time_limit_seconds']
+        assert retry['memory_limit_bytes'] == index['memory_limit_bytes']
+        opts = prior['search_options']
+        if pid == 'P03':
+            assert opts[opts.index('--state-representation') + 1] == '3'
+        else:
+            assert opts[opts.index('-o') + 1] == '1' and prior['trace_enabled']
+
+        def measurement(record, run=None):
+            return dict(run=run or record['log_path'].replace('\\', '/').split('/')[2],
+                        result=record['result'], wall_seconds=record['wall_seconds'],
+                        time_limit_seconds=record['time_limit_seconds'],
+                        memory_limit_bytes=record['memory_limit_bytes'],
+                        sampled_peak_rss_bytes=record['sampled_peak_rss_bytes'],
+                        explored_states=record['explored_states'], stored_states=record['stored_states'])
+
+        retry_measurement = measurement(retry, retry_path.split('/')[0])
+        if retry['result'] == 'satisfied':
+            final = dict(retry_measurement, short_method='extended BFS')
+        else:
+            assert retry['result'] in ('timeout', 'memory_limit')
+            final = dict(measurement(prior, prior_path.split('/')[0]),
+                         short_method='E06 conservative proof' if pid == 'P03' else 'DFS witness')
+        properties[pid] = dict(initial_bfs=measurement(first), extended_bfs=retry_measurement, final=final)
+    assert set(properties) == {'P01', 'P03', 'P08'}
+    return dict(configuration='n3_dmax3_timeout14_hb_active_period20',
+                parallel_jobs=index['parallel_jobs'], properties=properties)
 
 def main():
     sys.stdout.reconfigure(encoding='utf-8')
@@ -85,41 +128,12 @@ def main():
     for kind, values in categories.items(): save(OUT/f'{kind}_records.json', values)
     save(OUT/'evidence_index.json', index)
     lookup = {(r['N'], r['heartbeat_mode'], r['property_id']): r for r in rows}
-    labels = [f'N={n} / HB {hb}' for n in [1, 2, 3] for hb in ['off', 'on']]
-    configs = [(n, hb) for n in [1, 2, 3] for hb in ['inactive', 'active']]
-    fig, axes = plt.subplots(2, 2, figsize=(13, 8))
-    mapping = {'not_satisfied': 0, 'satisfied': 1, 'timeout': 2, 'memory_limit': 2}
-    grid = [[mapping[lookup[n, hb, p]['result']] for p in IDS] for n, hb in configs]
-    ax = axes[0, 0]
-    ax.imshow(grid, cmap=ListedColormap(['#e7b87b', '#82b7aa', '#bfc5cd']), vmin=0, vmax=2, aspect='auto')
-    ax.set_xticks(range(4), IDS); ax.set_yticks(range(6), labels)
-    for i in range(6):
-        for j in range(4): ax.text(j, i, ['FALSE', 'TRUE', 'LIMIT'][grid[i][j]], ha='center', va='center', fontsize=10)
-    ax.set_title('BFS query truth (P08 FALSE: failure excluded)')
-    values = [lookup[n, hb, 'P03'] for n, hb in configs]
-    for ax, key, title, scale in [(axes[0, 1], 'explored_states', 'P03: explored states (completed checks)', 1),
-                                  (axes[1, 0], 'wall_seconds', 'P03: wall time (s), log scale', 1),
-                                  (axes[1, 1], 'sampled_peak_rss_bytes', 'P03: sampled peak RSS (MiB)', 1024**2)]:
-        for i, r in enumerate(values):
-            limited = r['result'] in ['timeout', 'memory_limit']
-            v = r[key]
-            if v is not None:
-                ax.bar(i, v/scale, color='#3979ad' if i % 2 == 0 else '#a95731', hatch='//' if limited else None)
-            label = 'LIMIT' if limited else f'{v/scale:,.2f}' if scale != 1 or key == 'wall_seconds' else f'{v:,}'
-            if v is None:
-                ax.text(i, .08, label, transform=ax.get_xaxis_transform(), ha='center', va='bottom', fontsize=8)
-            else:
-                ax.text(i, v/scale, label, ha='center', va='bottom', fontsize=8)
-        ax.set_xlim(-.6, 5.6)
-        ax.set_xticks(range(6), [s.replace(' / ', '\n') for s in labels], fontsize=9)
-        ax.set_title(title, fontsize=11); ax.spines[['top', 'right']].set_visible(False)
-        if key in ['wall_seconds', 'explored_states']: ax.set_yscale('log'); ax.margins(y=.3)
-        else: ax.margins(y=.2)
-    fig.suptitle('E05: heartbeat activation and verification cost (BFS)', fontsize=16, fontweight='bold')
-    fig.text(.5, .015, 'P01: success reachable | P03: START implies armed | P08: client 0 failure reachable | P24: all heartbeats seen\nSingle run per configuration/query; 120 s and 8 GiB limits. LIMIT is unknown, not false.\nWall time includes startup; sampled RSS is a lower bound on peak. No complete state count is claimed for limited checks.', ha='center', fontsize=9)
-    fig.tight_layout(rect=(0, .11, 1, .95))
-    for ext in ['png', 'svg']: fig.savefig(OUT/f'E05_activation.{ext}', dpi=180)
-    plt.close(fig)
+    followup_path = ROOT/'experiments/E05_heartbeat/activation_followup.json'
+    followup = None
+    if followup_path.exists():
+        followup = summarize_followup(json.loads(followup_path.read_text(encoding='utf-8')), rows)
+        save(OUT/'activation_followup.json', followup)
+    plot_activation(rows, OUT, followup)
     settings = [lookup[2, 'active', 'P03']] + [r for r in categories['settings'] if r['property_id'] == 'P03']
     fig, axes = plt.subplots(1, 2, figsize=(10, 4.8))
     names = ['Period 20\nfirst: 20,20', 'Period 40\nfirst: 40,40', 'Period 20\nfirst: 20,30']
