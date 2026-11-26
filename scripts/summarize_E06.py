@@ -170,13 +170,29 @@ def main():
         completion = json.loads((OUT/'completion_proof.json').read_text(encoding='utf-8'))
         assert completion['conclusion'] == 'satisfied_by_compositional_proof'
         truth[3, 'ack_priority', 'P25'] = 'satisfied'
+    bases = {}
+    if completion:
+        bases[3, 'ack_priority', 'P25'] = 'Prepared boundary plus exact continuation proof'
+    heartbeat_followup = EXPERIMENT/'heartbeat_followup.json'
+    if heartbeat_followup.exists():
+        followup = json.loads(heartbeat_followup.read_text(encoding='utf-8'))
+        assert set(followup['verified_premises']) == {'P06', 'P46'}
+        for pid, run in followup['verified_premises'].items():
+            row = audit(BASE/run/followup['configuration']/pid/'result.json')
+            assert row['property_id'] == pid and row['result'] == 'satisfied'
+            assert row['N'] == 3 and row['scheduler'] == 'original'
+        assert (ROOT/followup['proof']).is_file()
+        truth[3, 'original', 'HB_PROGRESS'] = 'satisfied'
+        bases[3, 'original', 'HB_PROGRESS'] = 'P06 packet progress plus finite competing traffic'
     save(OUT/'outcome_summary.json', [dict(N=n, scheduler=policy, property=pid, result=value,
-         basis='Prepared boundary plus exact continuation proof' if completion and (n, policy, pid) == (3, 'ack_priority', 'P25') else 'Original 100-record study')
+         basis=bases.get((n, policy, pid), 'Original 100-record study'))
          for (n, policy, pid), value in truth.items()])
     summary = dict(invocations=len(all_rows), results=dict(Counter(r['result'] for r in all_rows)),
                    categories={k: len(v) for k, v in groups.items()}, source_model_sha256=sha(ROOT/'models/08_final_version.xml'))
     if completion:
         summary['supplementary_completion_proof'] = 'completion_proof.json (separate from the historical 100 invocations)'
+    if heartbeat_followup.exists():
+        summary['supplementary_original_heartbeat_progress'] = str(heartbeat_followup.relative_to(ROOT))
     save(OUT/'execution_summary.json', summary); save(OUT/'evidence_index.json', index)
     fig, ax = plt.subplots(figsize=(12, 6.6))
     configurations = [(n, p) for n in [1, 2, 3] for p in ['original', 'ack_priority']]
@@ -186,13 +202,15 @@ def main():
     for i in range(6):
         for j in range(5):
             label = 'TRUE*' if completion and (i, j) == (5, 4) else ['FALSE', 'TRUE', 'UNKNOWN'][grid[i][j]]
+            if heartbeat_followup.exists() and (i, j) == (4, 3):
+                label = 'TRUE†'
             ax.text(j, i, label, ha='center', va='center', fontsize=11)
     ax.set_yticks(range(6), [f'N={n} / '+('original' if p == 'original' else 'ACK priority') for n, p in configurations])
     ax.set_xticks(range(5), ['No retry\nexhaustion', 'No retry\ntrigger', 'Reply wait\nat most 6', 'Each pending HB\neventually sent', 'Prepared\nevitably Done'])
     ax.set_title('E06: ACK priority removes timeout exhaustion in the tested model', fontsize=15, fontweight='bold', pad=18)
     note = 'D=1..3, ACK_TIMEOUT=14, MAX_RETRY=2, HB_PERIOD=20, no loss.\nN=1,2: exact checks. N=3: concrete counterexamples plus decisive over-approximation proofs.\n'
     note += '* N=3 completion: verified Prepared boundary + exact universal continuation proof.\n' if completion else ''
-    note += 'UNKNOWN: unresolved. Heartbeat progress checks every active drone.'
+    note += '† N=3 original heartbeat progress: P06 plus finite competing traffic.' if heartbeat_followup.exists() else 'UNKNOWN: unresolved. Heartbeat progress checks every active drone.'
     fig.text(.5, .025, note, ha='center', fontsize=9)
     fig.tight_layout(rect=(0, .17, 1, .98))
     for ext in ['png', 'svg']: fig.savefig(OUT/f'E06_outcomes.{ext}', dpi=180)

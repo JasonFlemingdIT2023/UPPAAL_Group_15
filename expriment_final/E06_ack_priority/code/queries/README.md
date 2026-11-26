@@ -218,3 +218,15 @@ A[] (Supervisor.Prepared imply (forall (i : drone_id) (uploadDone[i] && missionI
 A[] ((completionStarted && !Supervisor.Done) imply completionAge <= 120)
 ```
 
+
+## [P45.q](P45.q)
+
+~~~text
+A[] !deadlock
+~~~
+
+## [P46.q](P46.q)
+
+~~~text
+A[] (Link.Transmitting imply ((Link.packet.peer == 0 imply ((Link.packet.kind == PK_COUNT imply Drone0.WaitCount) && ((Link.packet.kind == PK_REQUEST || Link.packet.kind == PK_MISSION_ACK) imply Sender0.WaitRequest) && (Link.packet.kind == PK_ITEM imply (Drone0.WaitItem && Drone0.nextSequence == Link.packet.seq)))) && (Link.packet.peer == 1 imply ((Link.packet.kind == PK_COUNT imply Drone1.WaitCount) && ((Link.packet.kind == PK_REQUEST || Link.packet.kind == PK_MISSION_ACK) imply Sender1.WaitRequest) && (Link.packet.kind == PK_ITEM imply (Drone1.WaitItem && Drone1.nextSequence == Link.packet.seq)))) && (Link.packet.peer == 2 imply ((Link.packet.kind == PK_COUNT imply Drone2.WaitCount) && ((Link.packet.kind == PK_REQUEST || Link.packet.kind == PK_MISSION_ACK) imply Sender2.WaitRequest) && (Link.packet.kind == PK_ITEM imply (Drone2.WaitItem && Drone2.nextSequence == Link.packet.seq))))))
+~~~

@@ -18,5 +18,6 @@
     "progress_decomposition": 6,
     "original_counterexamples": 3
   },
-  "supplementary_completion_proof": "completion_proof.json (separate from the historical 100 invocations)"
+  "supplementary_completion_proof": "completion_proof.json (separate from the historical 100 invocations)",
+  "supplementary_original_heartbeat_progress": "heartbeat_followup.json"
 }

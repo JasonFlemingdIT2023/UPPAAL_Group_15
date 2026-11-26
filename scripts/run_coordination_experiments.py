@@ -62,6 +62,8 @@ for _i in range(3):
 PROPERTIES['P42'] = ('Arming phase eventually completes', 'Supervisor.Arming --> Supervisor.Starting')
 PROPERTIES['P43'] = ('Starting phase eventually completes', 'Supervisor.Starting --> Supervisor.Done')
 PROPERTIES['P44'] = ('Prepared phase eventually starts arming', 'Supervisor.Prepared --> Supervisor.Arming')
+PROPERTIES['P45'] = ('No deadlock with heartbeat active', 'A[] !deadlock')
+PROPERTIES['P46'] = ('In-flight mission packets have a matching receiver', '')
 OPTIONS = ['-s', '-u', '-o', '0', '--state-representation', '1', '-S', '1', '-n', '0', '-r', '1']
 
 def sha(path):
@@ -89,6 +91,16 @@ def property_for(pid, n):
         formula = 'A[] (' + ' && '.join(f'CommandClient({i}).retries == 0' for i in range(n)) + ')'
     elif pid == 'P37':
         formula = 'A[] (' + ' && '.join(f'(CommandClient({i}).WaitAck imply CommandClient({i}).x <= 2 * D_MAX)' for i in range(n)) + ')'
+    elif pid == 'P46':
+        clauses = []
+        for i in range(n):
+            clause = (
+                f'(Link.packet.kind == PK_COUNT imply Drone{i}.WaitCount) && '
+                f'((Link.packet.kind == PK_REQUEST || Link.packet.kind == PK_MISSION_ACK) imply Sender{i}.WaitRequest) && '
+                f'(Link.packet.kind == PK_ITEM imply (Drone{i}.WaitItem && Drone{i}.nextSequence == Link.packet.seq))'
+            )
+            clauses.append(f'(Link.packet.peer == {i} imply ({clause}))')
+        formula = 'A[] (Link.Transmitting imply (' + ' && '.join(clauses) + '))'
     return title, formula
 
 

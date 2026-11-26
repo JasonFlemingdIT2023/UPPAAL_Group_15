@@ -40,9 +40,9 @@ Core queries are P25, P29–P32 and P34–P38. See the query list for regression
 
 ## 解释范围 / Interpretation
 
-回复上界从命令准入开始。P25 在 N=3 的结论来自 Prepared 边界与后续行为覆盖的分阶段证明。
+回复上界从命令准入开始。P25 在 N=3 的结论来自 Prepared 边界与后续行为覆盖的分阶段证明。原调度的 P30–P32 根据 P06 和有限竞争流量证明。 [心跳证明](results/proof/Original_heartbeat_progress.md)
 
-The reply bound starts at request admission. For N=3, P25 follows from the Prepared boundary and the continuation coverage argument.
+The reply bound starts at request admission. For N=3, P25 follows from the Prepared boundary and the continuation coverage argument. Under original scheduling, P30–P32 follow from P06 and finite competing traffic. [Heartbeat proof](results/proof/Original_heartbeat_progress.md)
 
 ## 复现命令 / Reproduction
 

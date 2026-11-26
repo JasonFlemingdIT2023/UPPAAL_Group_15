@@ -40,7 +40,9 @@ The over-approximation contains additional behaviors. A definite satisfied invar
 
 N=3 ACK-priority P35, P36, P37, P29, P02–P07, P13/P14 and P30–P32 are definitively satisfied. P34/P38 have exact witnesses. P25 was unresolved in the initial direct attempts: two exact attempts timed out, and the approximation returned MAY NOT. Its decomposed checks P39–P43 also returned MAY NOT; P44 was satisfied. N=1,2 P25 is satisfied with exact verification.
 
-On 26 November, N=3 P25 was established by a compositional proof. A full-model invariant verifies the Prepared boundary. An exact check of `A<> Supervisor.Done` then passes on a proof copy covering arbitrary heartbeat ages in [0,20], pending heartbeats, and an optional heartbeat with 0..3 residual transmission time. All original post-boundary protocol edges are retained. The state-coverage argument is in [the completion note](../../docs/experiment_results_E06_completion.md), with fixed runs in `completion_evidence.json`. These records are separate from the original 100 invocations. Neither production model was changed.
+On 26 November, N=3 P25 was established by a compositional proof. A full-model invariant verifies the Prepared boundary. An exact check of `A<> Supervisor.Done` then passes on a proof copy covering arbitrary heartbeat ages in [0,20], pending heartbeats, and an optional heartbeat with 0..3 residual transmission time. All original post-boundary protocol edges are retained. The state-coverage argument is in [the completion note](../../docs/experiment_results_E06_completion.md), with fixed runs in `completion_evidence.json`.
+
+The N=3 original-scheduling heartbeat follow-up proves P30–P32 from verified packet progress (P06) and the finite competing traffic argument. P46 checks matching receivers for in-flight mission packets. The [proof](../../expriment_final/E06_ack_priority/results/proof/Original_heartbeat_progress.md) and `heartbeat_followup.json` give the argument and run IDs. Both supplements are separate from the original 100 invocations.
 
 ## Execution and evidence
 

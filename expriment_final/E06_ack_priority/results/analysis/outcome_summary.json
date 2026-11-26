@@ -192,8 +192,8 @@
     "N": 3,
     "scheduler": "original",
     "property": "HB_PROGRESS",
-    "result": "maybe",
-    "basis": "Original 100-record study"
+    "result": "satisfied",
+    "basis": "P06 packet progress plus finite competing traffic"
   },
   {
     "N": 3,

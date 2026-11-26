@@ -1,0 +1,185 @@
+{
+  "conclusion": "P30-P32 established by packet progress and finite competing traffic",
+  "derived_wait_bound_model_units": 270,
+  "verification_attempts": [
+    {
+      "run": "20261125T193458804426Z_E06",
+      "property": "P30",
+      "result": "maybe",
+      "limit_seconds": 600.0,
+      "wall_seconds": 0.6744,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "1",
+        "--state-representation",
+        "0",
+        "-S",
+        "1",
+        "-n",
+        "4",
+        "-r",
+        "1",
+        "-t",
+        "0"
+      ]
+    },
+    {
+      "run": "20261125T193458804426Z_E06",
+      "property": "P31",
+      "result": "maybe",
+      "limit_seconds": 600.0,
+      "wall_seconds": 0.1837,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "1",
+        "--state-representation",
+        "0",
+        "-S",
+        "1",
+        "-n",
+        "4",
+        "-r",
+        "1",
+        "-t",
+        "0"
+      ]
+    },
+    {
+      "run": "20261125T193458804426Z_E06",
+      "property": "P32",
+      "result": "maybe",
+      "limit_seconds": 600.0,
+      "wall_seconds": 0.1314,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "1",
+        "--state-representation",
+        "0",
+        "-S",
+        "1",
+        "-n",
+        "4",
+        "-r",
+        "1",
+        "-t",
+        "0"
+      ]
+    },
+    {
+      "run": "20261125T193619327647Z_E06",
+      "property": "P45",
+      "result": "maybe",
+      "limit_seconds": 120.0,
+      "wall_seconds": 6.1218,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "0",
+        "--state-representation",
+        "3",
+        "-S",
+        "1",
+        "-n",
+        "0",
+        "-r",
+        "1"
+      ]
+    },
+    {
+      "run": "20261125T193619327647Z_E06",
+      "property": "P06",
+      "result": "satisfied",
+      "limit_seconds": 120.0,
+      "wall_seconds": 83.9179,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "0",
+        "--state-representation",
+        "3",
+        "-S",
+        "1",
+        "-n",
+        "0",
+        "-r",
+        "1"
+      ]
+    },
+    {
+      "run": "20261125T193719062763Z_E06",
+      "property": "P46",
+      "result": "satisfied",
+      "limit_seconds": 120.0,
+      "wall_seconds": 31.9261,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "0",
+        "--state-representation",
+        "3",
+        "-S",
+        "1",
+        "-n",
+        "0",
+        "-r",
+        "1"
+      ]
+    },
+    {
+      "run": "20261125T193536192978Z_E06",
+      "property": "P30",
+      "result": "timeout",
+      "limit_seconds": 600.0,
+      "wall_seconds": 600.0971,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "1",
+        "--state-representation",
+        "1",
+        "-S",
+        "1",
+        "-n",
+        "0",
+        "-r",
+        "1",
+        "-t",
+        "0"
+      ]
+    },
+    {
+      "run": "20261125T193536192978Z_E06",
+      "property": "P31",
+      "result": "interrupted_after_heartbeat_proof",
+      "limit_seconds": 600,
+      "wall_seconds": 30.752,
+      "verifier_options": [
+        "-s",
+        "-u",
+        "-o",
+        "1",
+        "--state-representation",
+        "1",
+        "-S",
+        "1",
+        "-n",
+        "0",
+        "-r",
+        "1",
+        "-t",
+        "0"
+      ]
+    }
+  ],
+  "proof": "results/proof/Original_heartbeat_progress.md"
+}

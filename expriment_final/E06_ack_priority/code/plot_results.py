@@ -14,7 +14,9 @@ def load(name):
 
 
 def main():
-    truth = {(r['N'], r['scheduler'], r['property']): r['result'] for r in load('outcome_summary.json')}
+    outcomes = load('outcome_summary.json')
+    truth = {(r['N'], r['scheduler'], r['property']): r['result'] for r in outcomes}
+    original_progress = truth[3, 'original', 'HB_PROGRESS'] == 'satisfied'
     selected = ['P35', 'P36', 'P37', 'HB_PROGRESS', 'P25']
     completion = load('completion_proof.json')['conclusion'] == 'satisfied_by_compositional_proof'
     fig, ax = plt.subplots(figsize=(12, 6.6))
@@ -25,13 +27,15 @@ def main():
     for i in range(6):
         for j in range(5):
             label = 'TRUE*' if completion and (i, j) == (5, 4) else ['FALSE', 'TRUE', 'UNKNOWN'][grid[i][j]]
+            if original_progress and (i, j) == (4, 3):
+                label = 'TRUE†'
             ax.text(j, i, label, ha='center', va='center', fontsize=11)
     ax.set_yticks(range(6), [f'N={n} / '+('original' if p == 'original' else 'ACK priority') for n, p in configurations])
     ax.set_xticks(range(5), ['No retry\nexhaustion', 'No retry\ntrigger', 'Reply wait\nat most 6', 'Each pending HB\neventually sent', 'Prepared\nevitably Done'])
     ax.set_title('E06: ACK priority removes timeout exhaustion in the tested model', fontsize=15, fontweight='bold', pad=18)
     note = 'D=1..3, ACK_TIMEOUT=14, MAX_RETRY=2, HB_PERIOD=20, no loss.\nN=1,2: exact checks. N=3: concrete counterexamples plus decisive over-approximation proofs.\n'
     note += '* N=3 completion: verified Prepared boundary + exact universal continuation proof.\n' if completion else ''
-    note += 'UNKNOWN: unresolved. Heartbeat progress checks every active drone.'
+    note += '† N=3 original heartbeat progress: P06 plus finite competing traffic.' if original_progress else 'UNKNOWN: unresolved. Heartbeat progress checks every active drone.'
     fig.text(.5, .025, note, ha='center', fontsize=9)
     fig.tight_layout(rect=(0, .17, 1, .98))
     for ext in ['png', 'svg']: fig.savefig((ROOT/'results/figs') /f'E06_outcomes.{ext}', dpi=180)

@@ -1,0 +1,15 @@
+{
+  "configuration": "n3_dmax3_timeout14_scheduler_original",
+  "conclusion": "P30-P32 established by packet progress and finite competing traffic",
+  "proof": "expriment_final/E06_ack_priority/results/proof/Original_heartbeat_progress.md",
+  "verified_premises": {
+    "P06": "20261125T193619327647Z_E06",
+    "P46": "20261125T193719062763Z_E06"
+  },
+  "diagnostic_runs": {
+    "lu_direct": "20261125T193458804426Z_E06",
+    "automatic_extrapolation_direct": "20261125T193536192978Z_E06",
+    "unrestricted_deadlock_check": "20261125T193619327647Z_E06"
+  },
+  "derived_wait_bound_model_units": 270
+}

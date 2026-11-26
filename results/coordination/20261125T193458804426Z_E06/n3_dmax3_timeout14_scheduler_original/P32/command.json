@@ -1,0 +1,19 @@
+[
+  "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+  "-s",
+  "-u",
+  "-o",
+  "1",
+  "--state-representation",
+  "0",
+  "-S",
+  "1",
+  "-n",
+  "4",
+  "-r",
+  "1",
+  "-t",
+  "0",
+  "model.xml",
+  "query.q"
+]

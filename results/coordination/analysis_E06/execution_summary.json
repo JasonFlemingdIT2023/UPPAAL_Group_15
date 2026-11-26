@@ -19,5 +19,6 @@
     "original_counterexamples": 3
   },
   "source_model_sha256": "77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d",
-  "supplementary_completion_proof": "completion_proof.json (separate from the historical 100 invocations)"
+  "supplementary_completion_proof": "completion_proof.json (separate from the historical 100 invocations)",
+  "supplementary_original_heartbeat_progress": "experiments\\E06_ack_priority\\heartbeat_followup.json"
 }

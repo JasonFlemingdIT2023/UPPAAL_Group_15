@@ -1,0 +1,15 @@
+Options for the verification:
+  Generating some trace
+  Search order is depth first
+  Using conservative space optimisation
+  Seed is 1
+  State space representation uses difference bound matrices
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at query.q:2
+ -- Formula MAY NOT be satisfied.
+ -- States stored : 5 states
+ -- States explored : 1 states
+ -- CPU user time used : 15 ms
+ -- Virtual memory used : 73036 KiB
+ -- Resident memory used : 25620 KiB

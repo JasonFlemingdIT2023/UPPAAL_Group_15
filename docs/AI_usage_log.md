@@ -1,5 +1,9 @@
 # AI usage log
 
+## E06 original-scheduling heartbeat follow-up (26 November 2026 - Chen, Codex assisted)
+
+Chen asked why eventual heartbeat admission was inconclusive under original scheduling and requested further verification. Codex checked the original UPPAAL verdicts, ran direct follow-ups, and verified packet progress (P06) and matching mission receivers (P46). It documented the finite-traffic argument that establishes P30–P32 for the tested three-drone configuration. Codex also expanded the six bilingual experiment reports and embedded the figures directly. The E06 results now report the matched P03 search counts and distinguish direct query outcomes from the proof of heartbeat progress.
+
 ## E06 completion proof (26 November 2026 - Chen, Codex assisted)
 
 At Chen's request, Codex extended the full N=3 P25 query budget to 1,200 seconds and investigated a passive completion timer. It then verified a full-model Prepared-boundary invariant and an exact universal-completion query on a continuation abstraction covering arbitrary heartbeat phases and residual in-flight heartbeat service. The documented state mapping establishes N=3 Prepared-to-Done for the existing configuration. After completing the proof audit, it intentionally stopped the still-unresolved direct query at approximately 814 seconds and retained an interruption record. Scripts audit unchanged original protocol templates, input/output hashes and raw verdicts. Timer attempts and a rejected bootstrap formulation are recorded separately. The original 100-query results remain historical evidence; reports and the outcome figure now include the compositional proof. Neither model 08 nor model 09 was changed. Human review is pending.
