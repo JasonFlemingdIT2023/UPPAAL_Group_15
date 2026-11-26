@@ -1,103 +1,101 @@
-# E06：ACK 优先调度的改进实验
+# E06: ACK-priority scheduling
 
-2026-11-25；2026-11-26 补充完成性证明。基于当前最终模型增加 ACK 优先规则，并使用 UPPAAL 验证。可直接打开的新模型为 [09_ack_priority.xml](../models/09_ack_priority.xml)。
+2026-11-25; completion proof added on 2026-11-26. The study added ACK priority to the final model and verified it in UPPAAL. The improved model is [09_ack_priority.xml](../models/09_ack_priority.xml).
 
-## 改进结果
+## Verified improvements
 
-在 E05 的三架无人机、心跳周期 20、传输时间 1–3、ACK 超时 14、最多重试两次、无丢包配置下，加入 ACK 优先规则后：
+For the E05 configuration with three drones, heartbeat period 20, service time 1–3, ACK timeout 14, up to two retries and reliable delivery, ACK priority establishes that:
 
-- 所有无人机都不会因等待回复超时而耗尽重试。
-- 所有命令客户端的重试计数始终为零。
-- 命令入网后，等待回复的时间不超过 **6 个模型时间单位**。
-- 每架无人机等待发送的心跳最终都能获得链路发送机会。
-- 任务完整性、ARM/START 前置条件、成功确认一致性、入网包进展和终态前无死锁检查通过。
+- No drone exhausts its retry budget while waiting for a reply.
+- Every command client's retry counter remains zero.
+- The reply wait after command admission is at most **six model time units**.
+- Every pending heartbeat eventually gains admission.
+- The checked mission integrity, ARM/START prerequisites, success evidence, admitted-packet progress and pre-outcome deadlock properties hold.
 
-因此，本次改进解决了 E05 中已经找到的“心跳与重传拖延 ACK，导致重试耗尽”的问题。2026-11-26 的补充验证进一步证明三架情况下 Prepared 后必然 Done：先验证完整模型的 Prepared 状态边界，再对覆盖全部后续行为的副本进行精确验证。具体方法及状态覆盖论证见[完成性证明](experiment_results_E06_completion.md)。
+The rule removes the E05 failure mechanism in which heartbeats and retransmissions delay an ACK until retry exhaustion. Supplementary verification on 2026-11-26 also established Prepared→Done for three drones by checking the full-model boundary at Prepared and then exactly verifying a model covering its continuations. See the [completion proof](experiment_results_E06_completion.md).
 
-## 具体改了什么
+## Model change
 
-链路空闲时，如果有命令 ACK 等待发送，就先让 ACK 入网；没有 ACK 等待时，其他消息按原方式竞争。正在传输的包照常完成。
+When the link is free, a pending command ACK is admitted before other traffic. With no ACK pending, other messages compete under the original rule. A packet already in service completes normally.
 
-实现使用 `ackPending[i]` 记录服务端是否位于 Decide。收到命令并进入 Decide 时设为 true，发送接受或拒绝 ACK 时清为 false。网络的六条非命令 ACK 入网边增加“所有 ackPending 都为 false”的守卫。P29 验证标记与服务端位置始终一致。
+`ackPending[i]` records whether server i is in Decide. It is set on command reception and entry to Decide, then cleared when an acceptance or denial ACK is admitted. Six non-command-ACK admission edges require all pending flags to be false. P29 verifies agreement between the flags and server locations.
 
-任务、命令、心跳和主管流程保持现有逻辑。ARM/START 仍在服务端把接受 ACK 交给网络时执行，因此 ACK 提前准入也提前了这一步动作。
+Mission, command, heartbeat and supervisor logic otherwise remains the same. ARM/START still executes when the server admits the acceptance ACK, so earlier ACK admission also advances that action.
 
-## 与原调度的对照
+## Comparison with original scheduling
 
-固定 ACK_TIMEOUT=14、D_MIN=1、D_MAX=3、MAX_RETRY=2、HB_PERIOD=20，心跳开启、丢包关闭。每架有三个任务项。
+Fixed settings are ACK_TIMEOUT=14, D_MIN=1, D_MAX=3, MAX_RETRY=2, HB_PERIOD=20, active heartbeats, reliable delivery and three mission items per drone.
 
-| N | 调度 | 重试耗尽 | 触发重试 | 入网后回复时间≤6 | 每架待发心跳最终发出 | Prepared 后必然 Done |
+| N | Policy | Retry exhaustion | Retry increment | Post-admission reply time ≤6 | Every pending heartbeat is admitted | Prepared leads to Done |
 |---:|---|---|---|---|---|---|
-| 1 | 原调度 | 不会 | 不会 | 不成立 | 成立 | 成立 |
-| 1 | ACK 优先 | 不会 | 不会 | 成立 | 成立 | 成立 |
-| 2 | 原调度 | 不会 | 可能 | 不成立 | 成立 | 成立 |
-| 2 | ACK 优先 | 不会 | 不会 | 成立 | 成立 | 成立 |
-| 3 | 原调度 | 可能 | 可能 | 不成立 | 成立（补充证明） | 不成立 |
-| 3 | ACK 优先 | 不会 | 不会 | 成立 | 成立 | 成立（补充分阶段证明） |
+| 1 | Original | Unreachable | Unreachable | False | True | True |
+| 1 | ACK priority | Unreachable | Unreachable | True | True | True |
+| 2 | Original | Unreachable | Reachable | False | True | True |
+| 2 | ACK priority | Unreachable | Unreachable | True | True | True |
+| 3 | Original | Reachable | Reachable | False | True, supplementary proof | False |
+| 3 | ACK priority | Unreachable | Unreachable | True | True | True, supplementary compositional proof |
 
-![性质对照](../results/coordination/analysis_E06/E06_outcomes.png)
+![Property comparison](../results/coordination/analysis_E06/E06_outcomes.png)
 
-1、2 架的结果来自精确验证。三架的原模型反例来自精确搜索，改进模型的安全性质和心跳进展由保守过近似得到确定的满足结论。图中 TRUE* 表示三机 Prepared→Done 的补充分阶段证明。TRUE† 表示基于原调度 P06 和有限竞争流量的心跳进展证明。
+The one- and two-drone results use exact verification. Three-drone counterexamples for the original model come from exact search. The improved model's safety and heartbeat-progress checks return definite positive verdicts under conservative over-approximation. TRUE* marks the three-drone compositional completion proof; TRUE† marks heartbeat progress established from P06 and finite competing traffic.
 
-另做了一个只记录 ackPending、没有优先守卫的对照。其 N=2 的九条重合性质与原调度一致，新增的标记一致性检查也通过。由此确认记录状态的变量没有改变这些行为，改进来自入网优先规则。
+A passive-flag control records `ackPending` without adding priority guards. At N=2, its nine shared properties agree with original scheduling, and flag consistency also holds. The checked behavioural improvement comes from the admission guards.
 
-## 为什么回复时间变为 6
+## Why the reply bound is six
 
-命令包入网后最多传输 3 个时间单位。命令到达服务端，ACK 成为待发消息；链路释放后，其他请求和心跳先等待，ACK 获得下一次发送机会，再最多传输 3 个时间单位。
+A command takes at most three units after admission. On delivery, its ACK becomes pending. Other requests and heartbeats yield the next available slot to that ACK, which takes at most another three units.
 
-因此，命令入网到回复的路径变为“命令传输 + ACK 传输”。验证的计时上界是 `2*D_MAX=6`，低于当前超时 14。计时从命令获得网络准入开始。
+The request/reply exchange therefore consists of command transmission followed by ACK transmission. The verified bound `2*D_MAX=6` is below timeout 14 and starts at command admission.
 
-P37 检查所有客户端在 WaitAck 时的时钟都不超过 6；P06 检查入网包最终离开；P35/P36 分别证明没有重试耗尽和重试计数增长。P38 还找到了 ACK 恰好在第 6 个时间单位送达的轨迹，因此 6 在该配置中能够达到。
+P37 bounds every client's clock in WaitAck by six. P06 checks eventual packet release, while P35/P36 exclude retry exhaustion and counter increments. P38 supplies a witness whose ACK arrives exactly at six, attaining the bound.
 
-## 实际轨迹
+## Diagnostic traces
 
-图中分别使用原模型的一条失败轨迹和改进模型的一条回复用时为 6 的轨迹，均从无人机 0 的 START 请求入网开始计时。
+The comparison uses an original-policy failure trace and an improved-policy witness attaining six units. Each starts at drone 0's first START admission.
 
-| 相对时间 | 原模型轨迹 | ACK 优先轨迹 |
+| Relative time | Original policy | ACK priority |
 |---:|---|---|
-| 0–3 | START0 请求传输 | START0 请求传输 |
-| 3–6 | 心跳等消息占用链路，ACK 等待 | ACK0 传输，在 t=6 收到回复 |
-| 14 | 第一次超时并重传 | 这次交换已经完成 |
-| 28 | 第二次超时并重传 | 这次交换已经完成 |
-| 40 | ACK0 才获得网络准入 | — |
-| 42 | 客户端重试耗尽，ACK0 仍在传输 | — |
+| 0–3 | START0 request transmission | START0 request transmission |
+| 3–6 | Heartbeats and other traffic occupy the link while the ACK waits | ACK0 transmission; reply received at 6 |
+| 14 | First timeout and retransmission | Exchange already complete |
+| 28 | Second timeout and retransmission | Exchange already complete |
+| 40 | ACK0 finally gains admission | — |
+| 42 | Client exhausts retries while ACK0 remains in flight | — |
 
-![回复时序对照](../results/coordination/analysis_E06/E06_reply_comparison.png)
+![Reply-timing comparison](../results/coordination/analysis_E06/E06_reply_comparison.png)
 
-原轨迹复用 E05 的实际记录，改进轨迹是本轮新生成的 UPPAAL 见证。完整事件、模型时间和消息种类保存在分析目录。两种调度也都找到了 Supervisor.Done 且全部心跳已收到的路径。
+The original trace reuses E05's recorded execution. The priority trace is a new UPPAAL witness. Complete events, model times and packet kinds are archived in the analysis directory. Both policies also admit a path reaching Supervisor.Done with all heartbeats observed.
 
-## 验证方法与完成情况
+## Verification method and completion
 
-三架心跳模型的精确探索仍比较昂贵：首次检查全队无失败及 Prepared→Done 均达到 120 秒；更换精确状态表示和外推方式后，Prepared→Done 也达到时间上限。随后使用 UPPAAL 的凸包保守过近似验证。
+Exact exploration remains costly for the three-drone heartbeat model. Initial checks for absence of fleet-wide failure and Prepared→Done reached 120 s. Alternative exact state representations and extrapolations also left the direct completion query at its limit. The next checks used UPPAAL's conservative convex-hull over-approximation.
 
-保守过近似扩大被检查的行为集合。在扩大后的集合中仍证明安全性质成立，结论也适用于原模型；工具返回 MAY/MAY NOT 时，结果记为未确定。该判读依据 [UPPAAL 的过近似说明](https://uppaal.org/benchmarks/)和[验证结果说明](https://docs.uppaal.org/gui-reference/verifier/verifying/)。
+Over-approximation enlarges the checked behaviour set. A definite safety proof over that set applies to the original model. MAY/MAY NOT verdicts remain inconclusive, following [UPPAAL's approximation guidance](https://uppaal.org/benchmarks/) and [verdict documentation](https://docs.uppaal.org/gui-reference/verifier/verifying/).
 
-三架改进模型的 P02–P07、P13、P14、P29–P32、P35–P37 均获得确定的满足结论。11 月 25 日的 Prepared→Done 过近似结果为 MAY NOT；当时分解后的命令完成、ARM 阶段、START 阶段进展也未确定，Prepared→Arming 已证明。11 月 26 日通过检查 Prepared 的完整状态边界，并对包含任意心跳相位及在途心跳的后续副本精确验证 `A<> Done`，补上了 P25 的证明。
+The three-drone priority model receives definite positive verdicts for P02–P07, P13, P14, P29–P32 and P35–P37. On November 25, the over-approximate Prepared→Done verdict was MAY NOT. Separate command, ARM-stage and START-stage progress checks were also inconclusive, while Prepared→Arming was established. On November 26, the full Prepared boundary check and an exact `A<> Done` check on a continuation covering arbitrary heartbeat phases and an in-flight heartbeat established P25.
 
-11 月 25 日的分析集保留 **100 条查询记录**：87 条得到确定答案，3 条超时，10 条过近似结果未确定。每条限 120 秒、8 GiB，当时的验证器顺序执行。11 月 26 日的补充证明和尝试单独索引，不改写历史记录；部分补充查询与延长后的完整查询同时运行。模型生成和解析器调试记录单独保留。
+The November 25 analysis set retains **100 query records**: 87 definite verdicts, three timeouts and ten inconclusive over-approximate results. Queries then ran sequentially with 120 s and 8 GiB limits. November 26 proof checks and attempts have separate indexes; some ran concurrently with the extended full-model query. Model-generation and parser-debugging records are stored separately.
 
-在相同过近似设置下，P03 的一次测量为：
+One matched P03 measurement under the same over-approximation settings gives:
 
-| 三架模型 | 探索状态 | 存储状态 | 墙钟秒 |
+| Three-drone model | Explored states | Stored states | Wall time (s) |
 |---|---:|---:|---:|
-| 原调度 | 2,722,596 | 1,087,331 | 19.8023 |
-| ACK 优先 | 318,619 | 267,941 | 1.5468 |
+| Original | 2,722,596 | 1,087,331 | 19.8023 |
+| ACK priority | 318,619 | 267,941 | 1.5468 |
 
-原调度的 P03 也在本轮补充证明成立，补上了 E05 中该查询的未知结果。表中是单次验证成本，墙钟包含启动开销。
+The original-policy P03 proof also settles E05's previously unknown safety result. These are single-run costs, including startup. ACK priority reduces explored states by 88.3% and stored states by 75.4%. The rule removes competing admissions ahead of pending ACKs and excludes the later behaviour caused by retries.
 
-同一三机 P03 搜索中，ACK 优先使探索状态减少 88.3%，存储状态减少 75.4%。网络规则限制了待发 ACK 与其他包之间的交错，同时验证排除了重试产生的后续行为。
+## Heartbeat progress under original scheduling
 
-## 三机原调度的心跳进展
+P30–P32 initially returned MAY NOT after about 0.13 s. Plain DBMs with LU extrapolation remained inconclusive. An extended compact-DBM P30 check with automatic extrapolation timed out at 600 s. Supplementary checks established eventual release of admitted packets (P06) and checked receivers for in-flight mission packets (P46). Urgent admission on an idle link, at most 60 non-heartbeat packets, and at least 20 units between each competing sender's heartbeat admissions imply that every pending heartbeat gains admission in finite time. See the [heartbeat-progress proof](../expriment_final/E06_ack_priority/results/proof/Original_heartbeat_progress.md).
 
-P30–P32 原先在约 0.13 秒返回 MAY NOT。直接改用 DBM 与 LU 外推仍判为未确定，compact DBM 加默认外推的 P30 延长验证在 600 秒超时。补充检查证明原调度的在途包最终释放链路（P06），并核验了在途任务包的接收状态（P46）。结合链路空闲时的紧急同步、60 个非心跳包上限，以及其余两架至少相隔 20 个模型单位才能再次准入心跳，可推出任一待发心跳都在有限时间内获得准入。 [原调度心跳进展证明](../expriment_final/E06_ack_priority/results/proof/Original_heartbeat_progress.md)
+## Deliverables and reproduction
 
-## 交付与复现
+- [Improved model for UPPAAL](../models/09_ack_priority.xml)
+- [Settings, queries and reproduction commands](../experiments/E06_ack_priority/README.md)
+- [Fixed evidence index](../experiments/E06_ack_priority/evidence.json)
+- [Three-drone completion proof and supplementary evidence](experiment_results_E06_completion.md)
+- [Trace event tables](../results/coordination/analysis_E06/trace_events.md)
+- [Execution summary](../results/coordination/analysis_E06/execution_summary.json)
 
-- [可直接在 UPPAAL 打开的改进模型](../models/09_ack_priority.xml)
-- [实验设置、查询和复现命令](../experiments/E06_ack_priority/README.md)
-- [固定证据索引](../experiments/E06_ack_priority/evidence.json)
-- [三机完成性证明及补充证据](experiment_results_E06_completion.md)
-- [实际轨迹事件表](../results/coordination/analysis_E06/trace_events.md)
-- [执行汇总](../results/coordination/analysis_E06/execution_summary.json)
-
-已校验原始日志判定、输入哈希、优先规则的六条入网边、标记更新与位置一致性，以及 43 个历史配置的生成回归。交付模型与被验证的三架改进副本仅在查询列表和守卫文字坐标上不同。08 基线文件保持原样。
+Audits checked raw-log verdicts, input hashes, all six guarded admission edges, flag updates and location consistency, and generation of 43 historical configurations. The deliverable differs from the verified three-drone priority variant only in the embedded query list and guard-label coordinates. The version 08 reference file remains unchanged.

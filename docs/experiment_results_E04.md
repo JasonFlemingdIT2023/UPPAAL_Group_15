@@ -1,80 +1,78 @@
-# E04：有界丢包条件下，重试能保证什么？
+# E04: what retries guarantee under bounded loss
 
-2026-11-25。本轮实际调用 UPPAAL 5.1.0-beta6 共 **392 次**，全部得到真/假结论，无超时、内存限额中止或工具错误。Python 负责组织、归档和绘图，性质由 UPPAAL 验证。原始最终模型未修改。
+2026-11-25. This study made **392 calls** to UPPAAL 5.1.0-beta6. Every call returned a definite true/false verdict, without timeout, memory-limit stop or tool error. Python organized, archived and plotted the results. UPPAAL verified the properties. The original final model was unchanged.
 
-## 结论与实验条件
+## Findings and conditions
 
-在本轮 N=1、3，传输时间 1–3、ACK 超时 24、无心跳的配置中，若整个协调过程最多丢 K 个命令协议包，且每次命令交换允许的重试数 R 不少于 K，则验证器证明：**一旦到达 Prepared，所有后续执行最终都会到达 Done**。这里的 Done 是完成全队 START 确认，不是完成物理飞行。
+For N=1 and N=3, packet service 1–3, ACK timeout 24 and inactive heartbeats, the verifier established the following: if the coordination attempt loses at most K command-protocol packets and each command exchange permits at least K retries, **every execution reaching Prepared eventually reaches Done**. Done records receipt of every drone's START acceptance.
 
-当 R<K 时，成功仍然可达，但任一无人机确认失败也可达，不能保证全队成功。这个结果说明，限制环境允许的丢包数量后，可以验证重试带来的恢复保证；不限制丢包时，测试的每个有限重试数都仍允许失败。
+When R<K, both success and confirmation failure are reachable. Bounding the environment's total losses makes a recovery guarantee verifiable. With unrestricted loss, every tested finite retry allowance still permits failure.
 
-这不是“R≥K 对任何网络都足够”的通用定理。另一个对照中，仅将 ACK 超时改回 14，N=3、K=R=0 也出现确认失败。丢包预算、等待时间和共享链路竞争必须一起说明。
+The waiting budget also matters. In a control with ACK timeout restored to 14, confirmation failure is reachable even at N=3 and K=R=0. The recovery result therefore depends on the loss budget, timeout and shared-link scheduling together.
 
-## K 和 R 的含义
+## Meaning of K and R
 
-K 是**整个协调过程共享的总丢包预算**：所有无人机、ARM 与 START、请求与接受/拒绝 ACK 共同使用。不按无人机重置，不按命令重置，成功交付也不清零。网络可以丢 0 到 K 个包，并不强制丢满。任务上传包不在可丢范围内。
+K is the **total loss budget shared by the whole coordination attempt**. It covers all drones, ARM and START requests, and acceptance/denial ACKs. It is not reset per drone, per command or on successful delivery. The network may lose any number from 0 to K. Mission-upload packets remain reliable.
 
-R=`MAX_RETRY` 是**每次命令交换中，首次发送之后允许重传的次数**。R=2 表示最多初发一次加重传两次，进入下一条命令时按原有逻辑重置计数。因此 K 的作用范围和 R 不同。
+R=`MAX_RETRY` is the **number of retransmissions permitted after the initial send in each command exchange**. R=2 allows one initial send and two retransmissions. The retry counter resets for the next command under the existing client logic.
 
-实现只在实验副本中添加网络局部计数器 `lossCount`：从 0 开始，仅在 Transmitting→Lost 时加一，该边增加 `lossCount < LOSS_BUDGET` 条件。客户端看不到这个计数器。它是更强的通信环境假设，不是给客户端增加“知道还会丢几次”的能力。
+The experiment variants add the network-local counter `lossCount`, initialized to zero and incremented only on Transmitting→Lost. That edge also requires `lossCount < LOSS_BUDGET`. Clients cannot read the counter; it constrains the communication environment.
 
-## 完成的对照矩阵
+## Comparison grid
 
-先运行 N=1，再完整重复 N=3；每个规模均为 K={0,1,2} × R={0,1,2}。固定任务项数 3、D_MIN=1、D_MAX=3、ACK_TIMEOUT=24、心跳关闭，保留最终模型的迟到 ACK 处理。超时 24 来自 E02 中未观察到纯时延失败的配置，并在本轮 K=0 的全部重试设置下重新核验。
+The complete K={0,1,2} × R={0,1,2} grid was run at N=1 and repeated at N=3. Fixed settings were three mission items, D_MIN=1, D_MAX=3, ACK_TIMEOUT=24 and inactive heartbeats, with the final model's late-ACK handling retained. Timeout 24 came from the E02 settings excluding timing-only failure and was checked again at every K=0 retry setting.
 
-下面的矩阵对 N=1 和 N=3 都成立：
+The following matrix holds at both fleet sizes:
 
-| 全局丢包预算 K | R=0 | R=1 | R=2 |
+| Global loss budget K | R=0 | R=1 | R=2 |
 |---:|---|---|---|
-| 0 | Prepared 后必然成功 | Prepared 后必然成功 | Prepared 后必然成功 |
-| 1 | 成功、失败都可达 | Prepared 后必然成功 | Prepared 后必然成功 |
-| 2 | 成功、失败都可达 | 成功、失败都可达 | Prepared 后必然成功 |
+| 0 | Guaranteed completion after Prepared | Guaranteed completion after Prepared | Guaranteed completion after Prepared |
+| 1 | Success and failure reachable | Guaranteed completion after Prepared | Guaranteed completion after Prepared |
+| 2 | Success and failure reachable | Success and failure reachable | Guaranteed completion after Prepared |
 
-![E04 性质矩阵](../results/coordination/analysis_E04/E04_outcome_matrix.png)
+![E04 property matrix](../results/coordination/analysis_E04/E04_outcome_matrix.png)
 
-每个配置检查 19 条性质，共 342 次主实验查询。P01（存在成功执行）全部为真。P25（Prepared 后必然 Done）在 R≥K 的单元格为真，P15（任一无人机失败可达）在这些单元格为假；在其他单元格二者相反。无人机 0 的 P08、已 ARM 但确认失败的 P10、未 ARM 且确认失败的 P11，与失败区域一致。
+Nineteen properties per configuration gave 342 main checks. P01 is true throughout. Where R≥K, P25 is true and fleet-wide failure reachability P15 is false. In the remaining cells, these two verdicts reverse. Drone-0 failure P08 and the armed/unarmed failure queries P10/P11 identify the same failure region.
 
-所查 P02–P07、P13、P14、P16、P21、P27 在所有配置成立：前置条件、成功证据、任务完整性、终态前无死锁、包准入后最终离开、服务时间窗口、Prepared 后最终 Done/Aborted、丢包种类及计数边界检查均通过。这不等于证明所有可能需求。
+P02–P07, P13, P14, P16, P21 and P27 hold in all configurations. These checks cover prerequisites, success evidence, mission integrity, pre-outcome deadlock freedom, eventual link release, service timing, eventual Done/Aborted after Prepared, permitted loss kinds and the loss-count bound.
 
-还检查了 P28：**丢满 K 个包后，成功是否仍可达？** K=2、R=1 时它为真，而 P25 为假。这是一个有用的区别：即便存在经历全部损失仍恢复的路径，也不能保证每种损失安排都成功。R=0 且 K>0 时，P01 为真而 P28 为假；成功见证可以不发生丢包，不能只凭 P01 声称具备丢包恢复能力。
+P28 asks whether **success remains reachable after the entire loss budget has been consumed**. At K=2, R=1, P28 is true while P25 is false: some paths recover after both losses, but other permitted loss arrangements fail. At R=0 and K>0, P01 is true while P28 is false. The success witness can avoid packet loss entirely.
 
-## 三条实际轨迹
+## Three diagnostic traces
 
-以下为单机见证，时间相对于首次 ARM 请求准入，单位是模型时间单位。不是平均耗时或最坏时间上界。
+These single-drone witnesses use time relative to the first ARM admission, in model time units.
 
-| 配置 | 实际事件 | 终点 |
+| Configuration | Events | Endpoint |
 |---|---|---|
-| K=2、R=2 | t=0 初发，t=1 请求丢失；t=24 重传，t=25 请求再丢；t=48 第二次重传，t=50 收到 ARM ACK；随后完成 START | t=52 到达 Done，预算已用尽 |
-| K=2、R=1 | 同样在 t=1、25 丢失两个 ARM 请求；只有一次重传机会 | t=48 客户端 Failed，armed=false；网络和服务端均空闲 |
-| K=1、R=0 | t=3 执行抽象 ARM 并发送 ACK；t=4 ACK 丢失 | t=24 客户端 Failed，但 armed=true |
+| K=2, R=2 | Initial send at 0, request lost at 1; retransmission at 24, lost at 25; second retransmission at 48, ARM ACK received at 50; START then completes | Done at 52, with the loss budget exhausted |
+| K=2, R=1 | ARM requests again lost at 1 and 25; only one retransmission is available | Client Failed at 48, armed=false, link and server idle |
+| K=1, R=0 | Abstract ARM executes and its ACK is sent at 3; ACK lost at 4 | Client Failed at 24, armed=true |
 
-![恢复与失败轨迹](../results/coordination/analysis_E04/E04_recovery_traces.png)
+![Recovery and failure traces](../results/coordination/analysis_E04/E04_recovery_traces.png)
 
-前两条轨迹展示相同的两次请求丢失，增加一次重试后能恢复；这个具体见证配合 P25 的全称验证，支持本轮的恢复结论。第三条延续 E03 的发现：确认失败仍可能对应“已经执行”，有界丢包也不会自动消除这种不确定性。
+The first two traces have the same two request losses. An additional retry allows recovery, consistent with the universal P25 result. The third extends E03's execution/confirmation distinction to bounded loss. At both failure-trace endpoints the supervisor is still Arming; the successful witness reaches Done.
 
-两条单机失败见证截断时 Supervisor 仍在 Arming，不能将截图终点写成已经 Aborted。成功恢复见证确实到达 Done。
+## Additional controls
 
-## 三项边界核查
+**Unrestricted loss.** At N=1 and R=0, 1 or 2, P01/P08/P10/P11 are true and P25 is false, giving 15 checks. These environments can discard every attempt, whereas the bounded grid restricts the total losses.
 
-**不限制丢包，不能靠本轮有限重试取得保证。** N=1，R=0、1、2 时，P01/P08/P10/P11 均为真，P25 均为假，共 15 次检查。不能因此说重试没有价值：这里允许环境持续丢弃每次尝试，而有界实验限制了这种对手行为。未用这些有限测试冒充对所有 R 的穷举。
+**Shorter timeout.** At N=3, K=R=0, changing ACK_TIMEOUT from 24 to 14 makes P01/P08/P10/P15 true and P25 false. ARM0 enters the link at relative time 0. Other drones occupy intervening slots, so ACK0 is admitted and ARM0 executes only at 12. At 14 the client fails while ACK0 remains in flight. The trace contains no packet loss.
 
-**超时预算仍然重要。** N=3、K=0、R=0，将 ACK_TIMEOUT 从 24 改为 14 后，P01、P08、P10、P15 为真，P25 为假。诊断轨迹显示相对 t=0 发送 ARM0；其他无人机流量占用链路，t=12 才轮到 ACK0 准入并执行 ARM0；t=14 客户端失败时 ACK0 仍在传输。整个轨迹没有丢包。故即使 R≥K，也不能脱离时延和调度配置推导成功。
+**Starting condition.** The additional query `A<> Supervisor.Done` is false at N=1 and N=3 with K=R=0. A counterexample remains in initial Supervisor.Idle, whose location has no time bound and whose outgoing transition is not urgent. P25 instead checks progress from Prepared. P01 confirms success is reachable, and every path to Done passes through Prepared.
 
-**保证的起点是 Prepared。** 补查 `A<> Supervisor.Done`，N=1、3 的 K=R=0 均为假。反例停留在初始 Supervisor.Idle：该位置没有时间上界，离开边也不紧急，模型允许无限等待而不开始上传。我们没有偷偷改变启动逻辑来让性质通过。P25 则从 Prepared 检查命令阶段；P01 为真，且到达 Done 必经 Prepared，因此其前提确实可达。
+The reliable-link controls without a loss counter cover N=1 and N=3 and R=0, 1 or 2. Their 24 P01/P08/P15/P25 checks agree with K=0. A structural audit confirmed that the counter only controls the existing loss edge and leaves the other protocol templates unchanged.
 
-此外，N=1、3，各 R=0、1、2 的 24 次无计数器可靠网络对照，在 P01/P08/P15/P25 上与 K=0 的判定一致。独立结构审计确认计数器只控制原有丢包边，其他协议模板没有变化。
+## Evidence, cost and scope
 
-## 证据、成本与限制
+The 392 calls comprise 342 main checks, 15 unrestricted-loss controls, 24 reliable-link controls, five short-timeout controls and six diagnostic checks. Queries ran sequentially with BFS, a 120 s limit and an 8 GiB limit. Trace queries were separate from routine measurements.
 
-392 次包括 342 次主实验、15 次无限制丢包对照、24 次可靠网络对照、5 次短超时对照，以及 6 次诊断查询。每条查询限 120 秒、8 GiB；所有查询顺序执行、使用 BFS，常规测量与轨迹查询分开。
+Each main query was measured once. Median wall time was 0.18555 s, maximum wall time 0.7327 s, and the sum over 342 checks 65.8817 s. Maximum sampled RSS was approximately 26.01 MiB. Startup and licence checks account for much of these short runtimes. RSS sampling every 50 ms bounds the peak from below. Liveness search/CPU summaries are excluded from comparisons.
 
-主实验每条只测一次：墙钟中位数 0.18555 秒，最大 0.7327 秒，342 条墙钟时间合计 65.8817 秒，最大采样 RSS 约 26.01 MiB。启动/许可证开销占比较大，不将小差异解释为性能优化。RSS 每 50 ms 采样，是峰值下界；活性性质的探索/CPU 汇总不用于比较。
+The archive contains actual models, queries, commands, tool version/hash, runner snapshots, raw logs, per-query results, matrices and trace event tables. Audits checked input hashes, raw verdicts, counter-update placement and reliable controls. Twenty-five generated configurations from E01/E02/E03/E05 remained byte-identical. The source model SHA-256 remains `77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d`.
 
-已保存实际模型与查询、命令、工具版本/哈希、运行器快照、原始日志、逐查询结果、矩阵和轨迹事件表。审计核对输入哈希、原始判定、丢包计数更新位置及可靠对照，并确认旧 E01/E02/E03/E05 的 25 个生成配置仍逐字节一致。源模型 SHA-256 仍为 `77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d`。
+- [Experiment package, queries and replay commands](../experiments/E04_bounded_loss/README.md)
+- [Fixed run index](../experiments/E04_bounded_loss/evidence.json)
+- [Trace event tables](../results/coordination/analysis_E04/trace_events.md)
+- [Structured execution summary](../results/coordination/analysis_E04/execution_summary.json)
 
-- [实验包、查询与复现命令](../experiments/E04_bounded_loss/README.md)
-- [固定运行索引](../experiments/E04_bounded_loss/evidence.json)
-- [实际轨迹事件表](../results/coordination/analysis_E04/trace_events.md)
-- [结构化执行汇总](../results/coordination/analysis_E04/execution_summary.json)
-
-结论只覆盖已测试的 N=1、3、K/R≤2 和上述条件，没有扩展到心跳开启、任意机群规模、概率丢包或真实飞行。后续改进应保留这些条件和反例，再独立验证调度策略或超时设计的效果。
+The result covers the tested N=1 and N=3, K/R≤2 and stated communication settings. Subsequent scheduling or timeout improvements can be compared against these conditions and counterexamples.

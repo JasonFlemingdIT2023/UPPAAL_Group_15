@@ -1,6 +1,6 @@
-# 查询 / Queries
+# Queries
 
-以下文件用于 verifyta，编号后缀表示同一性质的不同公式或注释版本。 / These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
+These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
 
 ## [P01.q](P01.q)
 
@@ -103,4 +103,3 @@ Supervisor.Prepared --> (Supervisor.Done || Supervisor.Aborted)
 ```text
 E<> (cmdAccepted[0][ARM] && CommandClient(0).current == ARM && CommandClient(0).retries > 0)
 ```
-

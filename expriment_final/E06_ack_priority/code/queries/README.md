@@ -1,6 +1,6 @@
-# 查询 / Queries
+# Queries
 
-以下文件用于 verifyta，编号后缀表示同一性质的不同公式或注释版本。 / These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
+These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
 
 ## [ContinuationDone.q](ContinuationDone.q)
 
@@ -217,7 +217,6 @@ A[] (Supervisor.Prepared imply (forall (i : drone_id) (uploadDone[i] && missionI
 ```text
 A[] ((completionStarted && !Supervisor.Done) imply completionAge <= 120)
 ```
-
 
 ## [P45.q](P45.q)
 

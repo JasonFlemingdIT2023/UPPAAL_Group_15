@@ -1,6 +1,6 @@
-# 查询 / Queries
+# Queries
 
-以下文件用于 verifyta，编号后缀表示同一性质的不同公式或注释版本。 / These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
+These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
 
 ## [P01.q](P01.q)
 
@@ -127,4 +127,3 @@ E<> (CommandClient(0).retries > 0 || CommandClient(1).retries > 0 || CommandClie
 ```text
 E<> (CommandClient(0).retries > 0 || CommandClient(1).retries > 0 || CommandClient(2).retries > 0 || CommandClient(3).retries > 0)
 ```
-

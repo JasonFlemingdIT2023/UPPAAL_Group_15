@@ -1,97 +1,95 @@
-# 基线与 E02 第一批实验结果
+# Reference model and E02: first experiment results
 
-日期：2026-11-24。执行：Chen 的实验工作，由 Codex 辅助实现与运行。
+2026-11-24. Chen's experiment work, with Codex assisting implementation and execution.
 
-## 已完成的范围
+## Completed scope
 
-使用主分支提交 `2ecefd2` 的 `08_final_version.xml`，原模型未修改。执行工具为本机已授权的 UPPAAL 5.1.0-beta6。基线完成 P01–P16 共 16 次查询；E02 的 9 个配置各运行 8 条性质，重复 3 轮，共 216 次查询。232 条正式记录均完成，没有超时、内存超限或工具错误。三轮 E02 的性质结果完全一致。另有诊断轨迹和补充查询，单独归档，不计入这 232 条。
+The study used `08_final_version.xml` from main commit `2ecefd2`, without modifying the source model, and a locally licensed UPPAAL 5.1.0-beta6 installation. The reference study checked P01–P16 once. E02 checked eight properties in each of nine configurations, repeated three times, giving 216 checks. All 232 formal records completed without timeouts, memory-limit stops or tool errors. All three E02 repetitions produced identical property verdicts. Diagnostic traces and supplementary checks were archived separately from these 232 measurements.
 
-固定条件：3 架无人机，每架 3 个任务项；D_MIN=1，MAX_RETRY=2；无丢包、无心跳，单槽共享网络。时间均为模型单位。
+Fixed settings were three drones, three mission items per drone, D_MIN=1, MAX_RETRY=2, no packet loss, inactive heartbeats and a single shared link slot. Timing parameters use model time units.
 
-方法、复跑命令及日志索引见 [实验包说明](../experiments/coordination/README.md)。这是一轮已执行的结果记录，尚不代表 E01–E05 全部完成。
+Methods, replay commands and log indexes are in the [experiment package](../experiments/coordination/README.md). This record describes the first completed batch; later experiments are documented separately.
 
-## 基线结果
+## Reference results
 
-基线 D_MAX=3、ACK_TIMEOUT=14。
+The reference uses D_MAX=3 and ACK_TIMEOUT=14.
 
-| 性质 | 结果 | 含义 |
+| Property | Verdict | Meaning |
 |---|---|---|
-| P01 | 满足 | 存在成功协调路径 |
-| P02–P04 | 满足 | ARM/START 前置条件与成功确认记录一致 |
-| P05 | 满足 | 死锁只可能出现在 Done/Aborted；不保证终态后的清理 |
-| P06 | 满足 | 已进入网络的包最终离开链路 |
-| P07 | 满足 | 服务结果遵守规定的时间区间 |
-| P08 | 不满足 | 无人机 0 的重试耗尽失败不可达 |
-| P09 | 满足 | 重试计数增长可达，即允许触发超时重试 |
-| P10、P11 | 不满足 | 基线下这两种 ARM 确认失败状态不可达 |
-| P12 | 不满足 | 符合 LOSSY=false：丢包不可达 |
-| P13、P14 | 满足 | Done 与真实 started 状态一致；确认的任务完整 |
-| P15 | 不满足 | 任意无人机 ARM/START 确认失败均不可达 |
-| P16 | 满足 | 到达 Prepared 后最终到达 Done 或 Aborted |
+| P01 | Satisfied | A successful coordination path exists |
+| P02–P04 | Satisfied | ARM/START prerequisites and success-confirmation records are consistent |
+| P05 | Satisfied | Deadlock is possible only at Done/Aborted; post-outcome cleanup is outside this query |
+| P06 | Satisfied | Every admitted packet eventually leaves the link |
+| P07 | Satisfied | Service outcomes respect the configured timing window |
+| P08 | Not satisfied | Drone 0 cannot exhaust its retry budget |
+| P09 | Satisfied | A retry-counter increment is reachable |
+| P10, P11 | Not satisfied | Neither ARM confirmation-failure state is reachable |
+| P12 | Not satisfied | Packet loss is unreachable, consistent with LOSSY=false |
+| P13, P14 | Satisfied | Done agrees with actual started flags; confirmed missions are complete |
+| P15 | Not satisfied | No drone can reach ARM/START confirmation failure |
+| P16 | Satisfied | Prepared eventually leads to Done or Aborted |
 
-P16 的前提是 Prepared，不能扩写为“从初始状态无条件保证最终成功”。P01 也只证明成功路径存在。
+P16 establishes progress from Prepared. P01 establishes the existence of a successful path.
 
-## E02：延迟与超时交互
+## E02: interaction between delay and timeout
 
-下面每格表示“P09 重试触发可达 / P08 重试耗尽可达”。P15 任意无人机失败的结果与 P08 在全部配置上一致。
+Each cell below reports “P09 retry increment reachable / P08 retry exhaustion reachable”. P15, which checks failure of any drone, agrees with P08 in every configuration.
 
 | D_MAX / ACK_TIMEOUT | 6 | 14 | 24 |
 |---|---|---|---|
-| 2 | 是 / 是 | 否 / 否 | 否 / 否 |
-| 3 | 是 / 是 | 是 / 否 | 否 / 否 |
-| 5 | 是 / 是 | 是 / 是 | 是 / 否 |
+| 2 | Yes / Yes | No / No | No / No |
+| 3 | Yes / Yes | Yes / No | No / No |
+| 5 | Yes / Yes | Yes / Yes | Yes / No |
 
-![E02 结果热力图](../results/coordination/analysis/E02_heatmaps.png)
+![E02 result heatmaps](../results/coordination/analysis/E02_heatmaps.png)
 
-所有 9 个配置均满足 P01 和 P02–P05；因此失败可达的 4 个配置也仍存在成功路径。这不是成功率比较，而是非确定性模型允许的行为集合比较。
+All nine configurations satisfy P01 and P02–P05. Thus, the four configurations admitting failure also admit success. These verdicts describe the behaviours allowed by the nondeterministic model.
 
-这组数据区分了三种状态：不触发重试、允许触发重试但不耗尽、允许耗尽重试。较长的超时在本次网格中改变了这些结果，但不能把 24 称为一般意义上的最优或普适安全阈值。尤其 D_MAX=5、超时=24 时，仍然允许触发重试。
+The grid distinguishes no retry, possible retry without exhaustion, and possible retry exhaustion. Increasing the timeout changes these outcomes within the tested grid. At D_MAX=5 and timeout 24, retries remain possible even though failure is excluded.
 
-## 轨迹 A：基线中的迟到 ACK
+## Trace A: a late ACK in the reference model
 
-补充性质 P17 要求：无人机 0 的 ARM 已获确认，当前命令仍为 ARM，且重试计数大于 0。该性质满足。
+Supplementary property P17 requires drone 0's ARM to have been accepted while the current command remains ARM and its retry counter is positive. The property is satisfied.
 
-![迟到 ACK 见证](../results/coordination/analysis/baseline_late_ack.png)
+![Late-ACK witness](../results/coordination/analysis/baseline_late_ack.png)
 
-以无人机 0 首次 ARM 进入网络为相对时刻 0（原始轨迹绝对时刻 24）：
+Taking drone 0's first ARM admission as relative time 0, corresponding to absolute trace time 24:
 
-1. 0–3：CMD0 传输。
-2. 3–6、6–9：CMD1、CMD2 先后占用网络。
-3. 9–12：ACK1 占用网络。
-4. 12：无人机 0 执行抽象 ARM，ACK0 进入网络。
-5. 14：客户端先走超时边，进入 Sending，重试计数增加；随后同一模型时刻 ACK0 到达，通过 Sending→Idle 记录接受。
+1. 0–3: CMD0 is transmitted.
+2. 3–6 and 6–9: CMD1 and CMD2 occupy the link in succession.
+3. 9–12: ACK1 occupies the link.
+4. 12: drone 0 executes abstract ARM and ACK0 enters the link.
+5. 14: the client takes its timeout edge, enters Sending and increments its retry counter. ACK0 then arrives at the same model time and is accepted on Sending→Idle.
 
-这条见证中没有第二次 CMD0 发送。P09 的计数增长不能解释成“实际多发了一个请求”。它也展示了截止时刻的事件竞争，以及最终模型中迟到 ACK 接收边的实际作用。
+This witness contains one CMD0 transmission. The P09 counter increment occurs before the client sends another request. The trace shows the race at the timeout boundary and the effect of the final model's late-ACK reception edge.
 
-## 轨迹 B：没有丢包，仍然执行但未获确认
+## Trace B: execution without confirmation on a reliable link
 
-D_MAX=5、ACK_TIMEOUT=14 的 P08 失败见证如下；另跑 P10 得到满足，直接确认这种执行与确认不一致状态可达。
+At D_MAX=5 and ACK_TIMEOUT=14, P08 supplies the failure witness below. A separate P10 check is satisfied, confirming reachability of execution without timely confirmation.
 
-![可靠链路下确认失败见证](../results/coordination/analysis/reliable_failure.png)
+![Confirmation failure on a reliable link](../results/coordination/analysis/reliable_failure.png)
 
-同样以首次 CMD0 网络准入为相对时刻 0：
+Time is relative to the first CMD0 admission:
 
-| 相对时刻 | 事件 |
+| Relative time | Event |
 |---:|---|
-| 0 | CMD0 首次发送，启动 ACK 计时 |
-| 14 | 第一次超时，重传 CMD0 并重置计时 |
-| 28 | 第二次超时，再次重传 CMD0 |
-| 38 | 无人机 0 执行 ARM，ACK0 进入网络 |
-| 42 | 第三次等待超时；重试预算已用尽，客户端进入 Failed |
+| 0 | CMD0 is sent and the ACK timer starts |
+| 14 | First timeout; CMD0 is retransmitted and the timer resets |
+| 28 | Second timeout; CMD0 is retransmitted again |
+| 38 | Drone 0 executes ARM and ACK0 enters the link |
+| 42 | The third waiting window expires; the retry budget is exhausted and the client enters Failed |
 
-终态 `armed[0]=true`、`cmdFailed[0][ARM]=true`，ACK0 仍在传输中，其服务时钟为 4，尚未超过 D_MAX=5。共享链路上的竞争与允许的发送顺序延迟了 ACK；整个见证中没有丢包。
+At the endpoint, `armed[0]=true` and `cmdFailed[0][ARM]=true`. ACK0 remains in flight with service-clock value 4, within D_MAX=5. Link contention and the permitted service order delay the reply; every completed transmission is delivered. Time 42 is this witness's endpoint. Hatching denotes the ACK still in flight.
 
-42 是这一条见证的相对时间，不是系统最坏完成时间。图中斜纹只表示见证结束时仍在途，不表示该 ACK 丢失。
+## Evidence and measurement
 
-## 证据与测量质量
+- Model, query and runner-snapshot hashes, declared parameters, exit codes and raw-log verdicts were checked. Every E02 configuration/property pair has three matching verdicts.
+- Wall time includes process startup and licence checks. The runs are short, so small timing differences are dominated by overhead. Verifier CPU time is parsed separately; a reported 0 ms reflects timer resolution.
+- Process RSS is sampled every 50 ms, giving a lower bound on peak memory. Unsupported or unavailable statistics remain empty.
+- The Windows verifier rejected the original non-ASCII path. Execution used hash-checked copies under an ASCII temporary path. The initial path failures remain recorded as tool errors.
+- beta6's `-X` trace export produced nonzero exit codes and empty XML files. Those attempts supplied no verification verdict. Switching to `-t 0` produced complete text traces.
+- Diagnostic traces are separate from timing measurements. Figure times are obtained by accumulating Delay entries from the raw traces; event data and original lines are also stored as JSON.
 
-- 对正式记录核对模型哈希、查询哈希、运行器快照哈希、声明参数、退出码与原始日志中的性质结果。E02 的每个配置—性质组合都有 3 个结果一致的重复记录。
-- 耗时保留为原始记录，但本批运行很短，墙钟时间包含进程启动与许可证检查，暂不把细小差异写成性能提升。验证器 CPU 时间另行解析；低分辨率下出现 0 ms 不代表零成本。
-- 进程内存以 50 ms 间隔采样，属于峰值下界；不是精确峰值。工具不可靠或未提供的统计保留为空。
-- Windows 原生验证器不接受当前中文路径，实际执行使用经哈希检查的英文临时路径副本。最初的路径错误保留为工具错误。
-- beta6 的 `-X` 轨迹导出出现非零退出码及空 XML；这些尝试未纳入验证结论。改用 `-t 0` 后完整文本轨迹已正常生成并保存。
-- 诊断轨迹与正式耗时测量分开。图的事件时间来自原始文本轨迹累计 Delay，事件及原始行文本另存 JSON，未凭示意手工编造时间。
+## Next stage recorded at the time
 
-## 下一阶段
-
-优先开展 E03 的请求/ACK 分离丢包。其可靠参考需要同时给出基线条件与 E02 已识别的纯时序失败边界，避免把所有不一致都归因于丢包。然后进行 E01 规模和 E05 心跳配对比较。E04 有界丢包仍为可选扩展。
+The next planned study was E03, separating request loss from ACK loss and using the reference settings together with E02's timing-failure boundary. E01 fleet scaling and E05 heartbeat comparisons were to follow. E04 bounded loss was then an optional extension.

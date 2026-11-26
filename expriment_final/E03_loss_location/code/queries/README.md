@@ -1,6 +1,6 @@
-# 查询 / Queries
+# Queries
 
-以下文件用于 verifyta，编号后缀表示同一性质的不同公式或注释版本。 / These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
+These files are verifier inputs. Suffixes distinguish formula or comment variants of a property.
 
 ## [P01.q](P01.q)
 
@@ -135,4 +135,3 @@ A[] (Link.Lost imply (Link.packet.kind == PK_COMMAND || Link.packet.kind == PK_A
 ```text
 (cmdFailed[0][ARM] && !armed[0]) --> armed[0]
 ```
-

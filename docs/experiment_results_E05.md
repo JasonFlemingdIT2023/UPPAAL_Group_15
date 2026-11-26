@@ -1,109 +1,109 @@
-# E05：心跳流量、确认失败与验证成本
+# E05: heartbeat traffic, confirmation failure and verification cost
 
-2026-11-25。实际使用 UPPAAL 5.1.0-beta6 的 verifyta；Python 生成配置、调用工具、归档并绘图。原始 `08_final_version.xml` 保持不变。
+2026-11-25. UPPAAL 5.1.0-beta6 verifyta supplied the verdicts. Python generated configurations, invoked the tool, archived results and plotted figures. The source `08_final_version.xml` was unchanged.
 
-## 主要发现
+## Main findings
 
-在同一份最终模型中启用心跳后，1、2 架无人机仍满足所查 START 安全性质，且无人机 0 的重试耗尽不可达。3 架时，找到了成功轨迹，也找到了无丢包条件下的确认失败轨迹。心跳影响了模型允许的行为，同时显著增加了部分查询的验证开销。
+Enabling heartbeats in the final model preserves the checked START safety property at one and two drones, with drone-0 retry exhaustion unreachable. At three drones, both a successful path and a confirmation-failure path exist under reliable delivery. Heartbeats change the permitted behaviour and substantially increase the cost of some verification queries.
 
-失败见证尤其说明：无人机可以已经执行 START，而地面客户端仍因未及时收到 ACK 报告失败。该结果是在当前单链路、非确定性竞争和超时配置下的可达性结论，不是实际系统的故障概率，也不是所有执行都会失败。
+The failure witness shows START already executed when the ground-side client reports a missing confirmation. This is a reachable outcome under the tested single-link, nondeterministic scheduling and timeout settings.
 
-## 实验设计
+## Experimental design
 
-主实验为 N=1、2、3 × 心跳关闭/开启，HB_PERIOD=20。每对副本仅在 system 组合中增加 `HBSender, ConnectionMonitor`，不修改原有模板；保留最终版本的迟到 ACK 处理。固定每架 3 个任务项、D_MIN=1、D_MAX=3、ACK_TIMEOUT=14、MAX_RETRY=2、LOSSY=false。
+The main grid is N=1, 2, 3 × heartbeat off/on, with HB_PERIOD=20. Each pair differs only by adding `HBSender, ConnectionMonitor` to the system composition. Existing templates and late-ACK handling are retained. Fixed settings are three mission items per drone, D_MIN=1, D_MAX=3, ACK_TIMEOUT=14, MAX_RETRY=2 and LOSSY=false.
 
-每个配置检查四条性质：P01 成功可达、P03 START 必须以 ARM 为前提、P08 无人机 0 重试耗尽可达、P24 存在一个所有无人机心跳均已被接收的状态。P08 为假是排除失败，P24 在关闭心跳时为假是预期的对照结果。
+Each configuration checks four properties: P01 success reachability, P03 START requiring ARM, P08 drone-0 retry-exhaustion reachability, and P24 reachability of a state in which every drone's heartbeat has been received. A false P08 excludes failure. A false P24 is expected with heartbeat senders disabled.
 
-主实验统一使用 BFS，每条查询限 120 秒、8 GiB，逐条运行。N=2 另比较周期 40、周期 20 且首次释放错开两种设置。性能数据每项测量一次，不声称统计显著性。额外的 DFS 查询和诊断轨迹单独保存，不混入 BFS 成本比较。
+Main queries run sequentially with BFS and limits of 120 s and 8 GiB each. Additional N=2 settings use period 40 or period 20 with staggered first releases. Each performance measurement is a single run. Extra DFS checks and diagnostic traces are archived separately from the BFS comparison.
 
-## 性质结果与搜索预算
+## Verdicts and search budgets
 
-下表是主实验 BFS 的完整结果，超时保留为“未知”。
+The original BFS results are:
 
-| N | 心跳 | 成功可达 P01 | START 安全 P03 | 无人机 0 失败可达 P08 | 全部心跳已见 P24 |
+| N | Heartbeats | Success, P01 | START safety, P03 | Drone-0 failure, P08 | All heartbeats seen, P24 |
 |---:|---|---|---|---|---|
-| 1 | 关 | 真 | 真 | 假 | 假 |
-| 1 | 开 | 真 | 真 | 假 | 真 |
-| 2 | 关 | 真 | 真 | 假 | 假 |
-| 2 | 开 | 真 | 真 | 假 | 真 |
-| 3 | 关 | 真 | 真 | 假 | 假 |
-| 3 | 开 | 超时，未知 | 超时，未知 | 超时，未知 | 真 |
+| 1 | Off | True | True | False | False |
+| 1 | On | True | True | False | True |
+| 2 | Off | True | True | False | False |
+| 2 | On | True | True | False | True |
+| 3 | Off | True | True | False | False |
+| 3 | On | Timeout, unknown | Timeout, unknown | Timeout, unknown | True |
 
-随后在完全相同的 N=3 心跳开启模型上，仅将搜索顺序从 BFS 改为 DFS，并为可达性查询生成见证：P01 为真，P08 也为真。墙钟时间分别为 0.6179、0.9356 秒。DFS 找到的见证是有效的存在性证据，因此综合结论为“成功与失败均可达”；原 BFS 超时记录仍保留，不改写为已完成，更不计入 DFS 的耗时。
+On the identical N=3 heartbeat-on model, changing only BFS to DFS produced witnesses for P01 and P08. Both are true, with wall times 0.6179 and 0.9356 s respectively. These witnesses establish that success and failure are both reachable. The original BFS timeout records remain separate.
 
-P03 的 DFS 补查也在 120.0487 秒超时。随后 E06 以保守凸包过近似证明同一个三机原调度模型满足 P03。E05 的 BFS 和 DFS 超时继续保留在原运行记录中。P24 检查能否达到每架都至少收到一次心跳的状态，待发心跳在所有执行中的进展由 E06 的 P30–P32 单独处理。 [E06 结果](experiment_results_E06.md)
+The P03 DFS follow-up also timed out, after 120.0487 s. E06 subsequently established P03 on the same original-scheduling model using conservative convex-hull over-approximation. P24 concerns reachability of heartbeat reception; universal progress of pending heartbeats is treated separately by E06 properties P30–P32. See the [E06 results](experiment_results_E06.md).
 
-延长补查对同一模型、同一查询和同一 BFS 选项并行重跑，单条上限为 600 秒和 2 GiB 采样 RSS。P01、P03、P08 分别在 585.11、588.00、584.21 秒触及内存上限。三条性质由上述 DFS 见证和 E06 的保守安全证明得到明确判定。原始对照、延长搜索和最终判定记录在 [补充验证汇总](../results/coordination/analysis_E05/activation_followup.json)。
+Extended follow-ups reran the same model, queries and BFS options in parallel with limits of 600 s and 2 GiB sampled RSS per query. P01, P03 and P08 reached the memory limit after 585.11, 588.00 and 584.21 s respectively. Their final verdicts follow from the DFS witnesses and E06 safety proof. The [follow-up summary](../results/coordination/analysis_E05/activation_followup.json) records original runs, extended searches and final verdicts.
 
-## 配对验证成本
+## Matched verification cost
 
-以相同的 P03 查询为例：
+For P03:
 
-| N | 心跳 | 探索状态 | 存储状态 | 墙钟秒 | 采样峰值 RSS / MiB |
+| N | Heartbeats | Explored states | Stored states | Wall time (s) | Sampled peak RSS (MiB) |
 |---:|---|---:|---:|---:|---:|
-| 1 | 关 | 45 | 40 | 0.1340 | 16.71 |
-| 1 | 开 | 287 | 267 | 0.1321 | 15.78 |
-| 2 | 关 | 576 | 481 | 0.1261 | 13.98 |
-| 2 | 开 | 53,314 | 24,687 | 0.2752 | 27.90 |
-| 3 | 关 | 7,541 | 6,231 | 0.1248 | 17.29 |
-| 3 | 开 | 未完成 | 未完成 | 120.0532，超时 | 901.07 |
+| 1 | Off | 45 | 40 | 0.1340 | 16.71 |
+| 1 | On | 287 | 267 | 0.1321 | 15.78 |
+| 2 | Off | 576 | 481 | 0.1261 | 13.98 |
+| 2 | On | 53,314 | 24,687 | 0.2752 | 27.90 |
+| 3 | Off | 7,541 | 6,231 | 0.1248 | 17.29 |
+| 3 | On | Incomplete | Incomplete | 120.0532, timeout | 901.07 |
 
-N=2 开启心跳后，这条查询探索的符号状态约为原来的 92.6 倍。N=3 的 P01/P03/P08 均达到 120 秒上限，采样 RSS 约为 901–908 MiB，未触及 8 GiB 限额。这里反映的是给定查询、搜索顺序和表示方式的计算成本；不是全部物理行为数量或普遍复杂度定律。
+At N=2, enabling heartbeats increases explored symbolic states by about 92.6 times. At N=3, P01/P03/P08 all reach the 120 s limit with sampled RSS of approximately 901–908 MiB, below the 8 GiB cap. These measurements characterize the selected queries, search order and state representation.
 
-![最终性质判定与原始 BFS 成本](../results/coordination/analysis_E05/E05_activation.png)
+![Final verdicts and original BFS costs](../results/coordination/analysis_E05/E05_activation.png)
 
-图左上是最终性质判定，星号表示通过后续证据确定的三机结果。三个成本面板使用原试验统一的 120 秒、8 GiB BFS 设置，展示相同预算下的搜索成本。
+The upper-left panel shows final verdicts, with asterisks marking the three-drone follow-up results. The three cost panels retain the original 120 s, 8 GiB BFS measurements.
 
-墙钟时间包含启动、许可证检查和轮询；小模型约 0.1 秒的差异不能作为加速结论。RSS 每 50 ms 采样，是峰值下界。超时查询没有完整的探索/存储计数。DFS 能迅速找到见证，也不等于能迅速穷尽状态空间、证明安全。
+Wall time includes startup, licence checks and polling. RSS is sampled every 50 ms. Timed-out checks have no complete explored/stored counts. Finding an existential witness with DFS requires different search work from establishing a universal safety property.
 
-## 失败轨迹：ACK 竞争与重传相互影响
+## Failure trace: ACK contention and retransmissions
 
-以下是 N=3、心跳周期 20、无丢包的 P08 DFS 见证片段。时间是模型初始化后的绝对时间，单位为模型时间单位，不直接当作秒。
+The following segment is the N=3, period-20, reliable-link P08 DFS witness. Times are absolute model times from initialization.
 
-| 时间 | 事件与含义 |
+| Time | Event |
 |---:|---|
-| 110 | 无人机 0 的 START 请求进入网络，开始第一个 14 单位 ACK 等待窗口 |
-| 113 | 请求送达，服务端进入 Decide，尚未取得 ACK 的发送机会 |
-| 113–121 | 三架无人机的心跳依次占用链路，ACK 继续等待 |
-| 124 | 无人机 0 第一次超时，并实际重传 START |
-| 124–138 | 重传、其他无人机 ACK 和下一轮心跳交错占用链路 |
-| 138 | 无人机 0 第二次超时，并再次实际重传 START |
-| 138–150 | 重传、心跳、无人机 1 的请求和 ACK 继续占用链路 |
-| 150 | 无人机 0 的 ACK 终于准入；模型在同一条服务端边执行抽象 START |
-| 152 | ACK 尚在传输中，客户端第三个等待窗口到期，进入 Failed |
+| 110 | Drone 0's START enters the link, starting its first 14-unit ACK window |
+| 113 | The request arrives; the server enters Decide with its ACK still awaiting admission |
+| 113–121 | Heartbeats from all three drones occupy consecutive slots while the ACK waits |
+| 124 | Drone 0 times out and retransmits START |
+| 124–138 | Retransmissions, other ACKs and subsequent heartbeats interleave on the link |
+| 138 | Drone 0 times out again and retransmits START |
+| 138–150 | Retransmissions, heartbeats, drone 1's request and ACK continue to occupy the link |
+| 150 | Drone 0's ACK is admitted; the same server edge executes abstract START |
+| 152 | The ACK remains in flight when the third waiting window expires; the client enters Failed |
 
-![无丢包失败见证](../results/coordination/analysis_E05/E05_failure_timeline.png)
+![Failure witness without packet loss](../results/coordination/analysis_E05/E05_failure_timeline.png)
 
-终点实际变量为 `started[0]=true`、`cmdFailed[0][START]=true`，Link 正传输无人机 0 的 START 接受 ACK；Supervisor 此刻仍在 Starting。不能把这个截断状态写成“已经进入 Aborted”或“飞机没有执行”。图中最后一个 ACK 以斜线表示尚未完成，未虚构其最终交付时间。
+At the endpoint, `started[0]=true`, `cmdFailed[0][START]=true`, and the link carries drone 0's START acceptance ACK. The supervisor remains Starting. The hatched final ACK is still in flight; the trace supplies no later delivery time.
 
-本轨迹发生了三次实际 START 请求传输，与 E01 中“计数增加但未实际重传”的轨迹不同。所有已经完成的包均正常交付。无优先级的链路选择允许心跳和重传插到 ACK 前面，最终使确认超时。迟到 ACK 修复保留了超时重试期间的接受路径，但这并不能保证在重试耗尽之前总能收到 ACK。
+This execution contains three actual START request transmissions. Every completed packet is delivered. Heartbeats and retransmissions repeatedly gain admission before the pending ACK. Late-ACK handling allows reception while retrying, but the allowed delay can still exhaust the waiting budget.
 
-N=2 的成功见证还揭示一个解释限制：心跳在 t=20 进入 Pending，却可一直等到 Supervisor.Done（t=44）的见证终点仍未发送。因此“开启心跳且成功可达”本身不表示成功过程一定包含心跳交付；P24 和上述 N=3 混合流量轨迹提供了独立证据。
+An N=2 success witness reaches Supervisor.Done at time 44 while a heartbeat pending since time 20 has not yet been sent. Heartbeat activation and success reachability alone therefore do not establish heartbeat delivery along that witness. P24 and the mixed-traffic N=3 trace supply separate reception evidence.
 
-## 周期与首次错开对照
+## Period and first-release comparisons
 
-在 N=2 比较以下三种开启心跳的设置；P01/P03/P24 均为真，P08 均为假。
+The three N=2 heartbeat-on settings all satisfy P01/P03/P24 and make P08 false.
 
-| 设置 | 首次具备发送条件 | P03 探索状态 | P03 存储状态 | P03 墙钟秒 | 采样 RSS / MiB |
+| Setting | First eligible times | P03 explored states | P03 stored states | P03 wall time (s) | Sampled RSS (MiB) |
 |---|---|---:|---:|---:|---:|
-| 原周期 20 | 20、20 | 53,314 | 24,687 | 0.2752 | 27.90 |
-| 周期 40 | 40、40 | 124,082 | 30,455 | 0.5938 | 33.69 |
-| 周期 20，首次错开 | 20、30 | 49,460 | 26,697 | 0.2812 | 27.89 |
+| Period 20 | 20, 20 | 53,314 | 24,687 | 0.2752 | 27.90 |
+| Period 40 | 40, 40 | 124,082 | 30,455 | 0.5938 | 33.69 |
+| Period 20, staggered first release | 20, 30 | 49,460 | 26,697 | 0.2812 | 27.89 |
 
-![周期与首次错开](../results/coordination/analysis_E05/E05_settings.png)
+![Period and first-release comparisons](../results/coordination/analysis_E05/E05_settings.png)
 
-延长周期后，本次探索状态反而增加约 2.33 倍。更长的计时常量和不同的时间交错会改变符号状态搜索，降低发送频率不保证降低验证复杂度；本实验没有分解各因素的独立贡献。
+The longer period increases explored states by about 2.33 times. Larger clock constants and different timing interleavings change symbolic exploration. Their individual contributions were not isolated in this study.
 
-首次错开使探索数下降约 7.2%，但存储状态增加，墙钟也没有呈现明确改善，不能称为全面优化。该变体只改变首次释放：给 HBSender 增加 `firstOffset=floor(id*HB_PERIOD/N)`，将其加到 Waiting 的界限，并在首次准入后清零。后续仍从每次网络准入重新计时，不保证两架始终保持 10 个时间单位相位差。P24 见证实际显示 t=20、30 分别准入，t=23、31 分别收到心跳。
+First-release staggering reduces explored states by about 7.2%, while stored states increase and wall time does not improve. This variant adds `firstOffset=floor(id*HB_PERIOD/N)` to the initial Waiting bound and clears it on first admission. Later periods restart at each admission, so the initial 10-unit offset is not permanently enforced. The P24 witness admits the two heartbeats at 20 and 30 and receives them at 23 and 31.
 
-这些参数对照只在 N=2 完成，不能宣称它们已经消除了 N=3 的失败。未来可以把 ACK 优先或有界等待调度作为独立改进实验，用相同失败查询检验；本轮没有修改调度策略或声称改进已被证明。
+These timing variants were checked at N=2. The scheduling policy was unchanged in E05; ACK priority was proposed as a subsequent experiment using the same failure queries.
 
-## 证据与完成范围
+## Evidence and completed scope
 
-初批实际调用 verifyta 37 次：主实验 24 次、周期/偏移对照 8 次、诊断轨迹 4 次、DFS 安全补查 1 次。其中 33 次得到真/假结论，4 次达到时间限制。32 次 BFS 测量中 29 次完成、3 次超时，另外一次超时来自 DFS 的 P03。超时记录用于解释验证成本。
+The initial batch made 37 verifyta calls: 24 main checks, eight period/offset controls, four diagnostic traces and one DFS safety follow-up. Thirty-three returned definite verdicts and four reached their time limit. Of 32 BFS measurements, 29 completed and three timed out; the fourth timeout was DFS P03.
 
-实验包见 [E05 README](../experiments/E05_heartbeat/README.md)，固定运行索引见 [evidence.json](../experiments/E05_heartbeat/evidence.json)。分析产物位于 `results/coordination/analysis_E05`，包括逐查询审计记录、三组 PNG/SVG 图、完整轨迹事件和 `failure_trace_summary.json`。原始 stdout 保留具体状态、转移及延时。
+See the [E05 package](../experiments/E05_heartbeat/README.md) and [fixed evidence index](../experiments/E05_heartbeat/evidence.json). `results/coordination/analysis_E05` contains per-query audit records, three PNG/SVG figure sets, complete trace events and `failure_trace_summary.json`. Raw stdout retains states, transitions and delays.
 
-审计覆盖模型/查询/运行器快照哈希、原始判定、超时标记、搜索参数；验证每个开关配对仅改变 system 组合；关闭心跳副本与 E01 对应规模逐字节一致，重合性质判定相同。旧 E01/E02/E03 共 17 个生成配置回归检查保持字节一致。基线源模型 SHA-256 仍为 `77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d`。
+Audits checked model/query/runner hashes, raw verdicts, timeout flags and search options. Each heartbeat pair changes only system composition. Heartbeat-off models are byte-identical to the matching E01 models and agree on shared properties. Seventeen earlier E01/E02/E03 configurations remained byte-identical. The source SHA-256 remains `77896d59a2282f817786b7712f0d4372432fce73bc54a6bbed32500f3c40744d`.
 
-本轮完成了计划中的开启/关闭比较、小规模周期/首次偏移比较和流量轨迹解释。安全查询只选 P03；没有把结果扩大为全部性质、全部无人机失败情况或任意规模的证明。
+The completed scope includes activation comparisons, small-fleet period/first-offset comparisons and traffic-trace analysis. The selected safety query is P03, and failure reachability is checked for drone 0.

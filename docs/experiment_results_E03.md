@@ -1,61 +1,61 @@
-# E03：丢包位置与确认失败
+# E03: loss location and confirmation failure
 
-2026-11-25。基于未修改的 08 源模型；Python 生成实验副本并调用 UPPAAL 5.1.0-beta6 的 verifyta。所有性质结果来自 UPPAAL，Python 负责自动化、记录、校验和绘图。
+2026-11-25. Python generated experiment variants from the unchanged version 08 source and invoked UPPAAL 5.1.0-beta6 verifyta. UPPAAL supplied all property verdicts; Python handled automation, recording, checks and plotting.
 
-## 实验范围
+## Experimental scope
 
-固定 N=3、任务项数=3、D_MIN=1、D_MAX=3、ACK_TIMEOUT=14、MAX_RETRY=2，无心跳。只改变允许丢失的消息种类，不改变超时、重试、调度或任务上传可靠性。四种模式每种验证 22 条性质，共 88 次；另用原始 LOSSY=true 做 21 次对照，生成 4 条诊断见证，共 113 次调用，均完成，没有超时或工具错误。
+Settings were N=3, three mission items, D_MIN=1, D_MAX=3, ACK_TIMEOUT=14, MAX_RETRY=2 and inactive heartbeats. Only the packet kinds eligible for command-protocol loss changed. Timeout, retries, scheduling and mission-upload reliability were fixed. Four modes each received 22 checks, giving 88 queries. Another 21 checks used the original LOSSY=true setting, and four diagnostic witnesses were generated. All 113 calls completed without timeout or tool error.
 
-原始模型开启 LOSSY 与拆分开关均开启的 21 条结果一致；拆分后可靠模式与已有基线的 16 条结果一致。这是所查性质的一致性检查，不等于对两个模型的完整行为等价证明。
+The original LOSSY setting and the variant with both loss switches enabled agree on 21 properties. The split reliable mode agrees with the existing reference on 16 properties. These comparisons check the listed properties.
 
-## 结果
+## Results
 
-以下“是/否”表示相应状态是否可达，不表示发生概率。
+Yes and No indicate reachability.
 
-| 问题 | 可靠 | 只丢请求 | 只丢 ACK | 两者可丢 |
+| Question | Reliable | Request loss only | ACK loss only | Both |
 |---|---|---|---|---|
-| 成功协调可能吗？P01 | 是 | 是 | 是 | 是 |
-| 确认失败可能吗？P08 | 否 | 是 | 是 | 是 |
-| 确认失败时已经 ARM？P10 | 否 | 是 | 是 | 是 |
-| 确认失败时尚未 ARM？P11 | 否 | 是 | 是 | 是 |
-| 协调中止且处理结束后仍未 ARM？P18 | 否 | 是 | 否 | 是 |
+| Is successful coordination possible? P01 | Yes | Yes | Yes | Yes |
+| Is confirmation failure possible? P08 | No | Yes | Yes | Yes |
+| Already armed at confirmation failure? P10 | No | Yes | Yes | Yes |
+| Still unarmed at confirmation failure? P11 | No | Yes | Yes | Yes |
+| Still unarmed after coordination aborts and command activity settles? P18 | No | Yes | No | Yes |
 
-四种模式均满足 P02-P07、P13、P14、P16、P21：本轮检查的前置条件、成功证据、任务完整性、终态前死锁限制、链路进展、服务窗口及 Prepared 后最终到达一个协调结果均满足。允许丢包并未使这些已检查安全规则失效，但使成功无法仅凭“成功可达”得到保证。
+All four modes satisfy P02–P07, P13, P14, P16 and P21. The checked prerequisites, success evidence, mission integrity, pre-outcome deadlock restriction, packet progress, service window and eventual outcome after Prepared all hold. Success remains reachable even in modes that also admit failure.
 
-![E03 结果](../results/coordination/analysis_E03/E03_outcomes.png)
+![E03 outcomes](../results/coordination/analysis_E03/E03_outcomes.png)
 
-P19/P20 证明各模式实际允许的丢包种类符合设置；P21 在所有模式中成立，任务上传消息不会被丢弃。
+P19/P20 confirm that the permitted lost packet kinds match each setting. P21 holds throughout: mission-upload messages are never dropped.
 
-## 两个核心见证
+## Two principal witnesses
 
-下述时间相对于无人机 0 首次 ARM 请求进入网络，单位为模型时间；它们不是最坏时间界限。
+Times below are relative to drone 0's first ARM request admission, in model time units.
 
-### 请求丢失：从未执行也能导致确认失败
+### Request loss: a command never executes
 
-只丢请求的 P18 见证中，CMD0 在时刻 0、14、28 发出，分别在 3、15、29 丢失。时刻 42 等待预算耗尽，总指挥中止。此时网络空闲，三个命令服务器均 Idle，客户端 0 Failed、另外两个 Idle，armed[0]=false。无人机 0 的命令确实没有到达处理方，且没有在途或待发送工作将它补上。
+In the request-only P18 witness, CMD0 is sent at 0, 14 and 28 and lost at 3, 15 and 29. At 42, the waiting budget is exhausted and the supervisor aborts. The link and all three servers are Idle. Client 0 is Failed, the other clients are Idle, and `armed[0]=false`. No pending or in-flight command remains to change that state.
 
-### ACK 丢失：已经执行，但地面站无法确认
+### ACK loss: execution without confirmation
 
-只丢 ACK 的 P10 见证中，CMD0 在时刻 0、14、28 发出。服务器在 17 和 31 走执行/回复边，把 armed[0] 设为 true；对应 ACK0 在 18 和 32 丢失。时刻 42 客户端进入 Failed，armed[0] 仍为 true。这里重复走 ARM 边只是对布尔状态的模型操作，不代表现实中发生了两次物理解锁。
+In the ACK-only P10 witness, CMD0 is sent at 0, 14 and 28. At 17 and 31 the server takes its execution/reply edge and sets `armed[0]=true`; the corresponding ACK0 packets are lost at 18 and 32. At 42 the client enters Failed while the drone remains armed. Repeated ARM edges update the model's Boolean state.
 
-## 两个不能省略的细节
+## Timing and pending work
 
-**只丢请求，也可能发生“已执行但确认失败”。**补充的 request/P10 轨迹中，前两次请求丢失，第三次终于送到；ARM 在时刻 40 执行，ACK 入网，但在时刻 42 确认超时，ACK 仍在途。这说明不能把“已执行但失败”简单归因于 ACK 丢失：请求丢失、剩余预算和链路竞争也会共同造成它。
+**Request-only loss can also yield execution without confirmation.** In the supplementary request/P10 trace, the first two requests are lost and the third is delivered. ARM executes at 40 and its ACK enters the link. Confirmation fails at 42 while the ACK remains in transit. Losses, remaining waiting time and link contention jointly determine the outcome.
 
-**只丢 ACK，也可能在失败瞬间尚未 ARM。**reply/P11 的终点中服务器 0 仍在 Decide，网络忙于其他消息。模型将 ARM 效果与接受回复的网络准入绑定，因此请求已到达并不立即使 armed 为真。后来新增 P22：
+**With ACK-only loss, ARM can still be pending at the instant of failure.** At the reply/P11 endpoint, server 0 remains in Decide while the link handles other traffic. The model applies ARM when the acceptance reply gains admission. Request delivery alone therefore does not immediately set `armed`. The added progress query P22 is:
 
 ```text
 (cmdFailed[0][ARM] && !armed[0]) --> armed[0]
 ```
 
-该性质在只丢 ACK 模式下满足，并且 P11 可达，所以不是空前提造成的无意义通过：失败时未执行的 ARM 随后仍会执行。对应 P18 不满足，没有找到所定义的“处理结束后仍未 ARM”状态。只丢请求与双向丢包模式的 P22 不满足；可靠模式的 P22 虽满足，但其前提不可达，必须单独标明。
+P22 is satisfied under ACK-only loss, and its premise is reachable through P11. A command still unexecuted at confirmation failure subsequently executes. P18 is false in this mode: the specified settled, unarmed abort state is unreachable. P22 is false under request-only and bidirectional loss. In reliable mode P22 holds with an unreachable premise.
 
-这也提醒我们：Supervisor.Aborted 只是停止协调，没有取消已交付的命令，不是全队安全撤销。
+Supervisor.Aborted stops further coordination but does not cancel commands already delivered to other components.
 
-## 可复现证据和边界
+## Evidence and scope
 
-见[实验包](../experiments/E03_loss_location/README.md)与[逐事件轨迹表](../results/coordination/analysis_E03/trace_events.md)。图表来自 JSON 结果，轨迹时间由原始日志中的 Delay 累加。审计检查了源模型、生成模型、查询和运行器快照哈希、退出码和日志结果。原始 08 哈希保持不变。
+See the [experiment package](../experiments/E03_loss_location/README.md) and [trace event tables](../results/coordination/analysis_E03/trace_events.md). Figures use recorded JSON results; event times accumulate raw-log Delay entries. Checks covered source/model/query/runner hashes, exit codes and logged verdicts. The version 08 source hash was unchanged.
 
-这是一个固定参数、有限场景下的符号模型检查。没有丢包概率，没有实际飞行模型；不据此估计成功率或实网表现。P18 指定了一个明确的无待处理命令状态，不枚举所有不同终态组合。没有开展跨模式统计性能比较。
+The symbolic checks use fixed parameters and nondeterministic loss. P18 specifies a particular settled state. The study does not introduce loss probabilities or flight dynamics, and does not compare statistical runtime performance across loss modes.
 
-下一步为 E01 无人机规模，随后做同源模型的 E05 心跳开关对比；E04 有界丢包与重试为可选扩展。
+The next studies planned at the time were E01 fleet scaling and E05 heartbeat activation. E04 bounded loss and retries was then an optional extension.
