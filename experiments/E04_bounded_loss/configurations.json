@@ -1,0 +1,200 @@
+[
+  {
+    "N": 1,
+    "loss_budget": 0,
+    "max_retry": 0,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 0,
+    "max_retry": 1,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 0,
+    "max_retry": 2,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 1,
+    "max_retry": 0,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 1,
+    "max_retry": 1,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 1,
+    "max_retry": 2,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 2,
+    "max_retry": 0,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 2,
+    "max_retry": 1,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 1,
+    "loss_budget": 2,
+    "max_retry": 2,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 0,
+    "max_retry": 0,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 0,
+    "max_retry": 1,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 0,
+    "max_retry": 2,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 1,
+    "max_retry": 0,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 1,
+    "max_retry": 1,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 1,
+    "max_retry": 2,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 2,
+    "max_retry": 0,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 2,
+    "max_retry": 1,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  },
+  {
+    "N": 3,
+    "loss_budget": 2,
+    "max_retry": 2,
+    "d_min": 1,
+    "d_max": 3,
+    "ack_timeout": 24,
+    "heartbeat": "inactive",
+    "mission_size": 3,
+    "loss_scope": "global across command requests and accepted/denied replies; never reset"
+  }
+]

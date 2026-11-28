@@ -1,0 +1,12 @@
+{
+  "result": "interrupted_after_compositional_proof",
+  "reason": "Both proof premises and the state-coverage audit have completed; the full-model search has not returned a verdict.",
+  "stopped_at_utc": "2026-11-25T17:24:03.849843+00:00",
+  "elapsed_verifier_seconds": 814.338,
+  "rss_at_stop_bytes": 4722446336,
+  "configured_time_limit_seconds": 1200,
+  "verifier_pid": 23156,
+  "runner_pid": 8716,
+  "proof_evidence": "results/coordination/analysis_E06/completion_proof.json",
+  "note": "This is an intentional stop, not a timeout, counterexample or successful direct-query result."
+}

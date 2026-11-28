@@ -1,0 +1,5 @@
+{
+  "file": "models\\09_ack_priority.xml",
+  "sha256": "5fbbb9db04673a50e649cd7ede0ec284fb69ac407f6d9f99b29e840329754304",
+  "equivalence": "Exact generated N=3 priority model except query list and guard label coordinates."
+}

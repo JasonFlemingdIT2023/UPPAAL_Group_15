@@ -1,0 +1,371 @@
+Options for the verification:
+  Generating some trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at query.q:2
+ -- Formula is satisfied.
+ -- States stored : 41 states
+ -- States explored : 45 states
+ -- CPU user time used : 15 ms
+ -- Virtual memory used : 70888 KiB
+ -- Resident memory used : 24192 KiB
+ -- Showing witness trace:
+
+State:
+( Supervisor.Idle Sender0.Idle Drone0.WaitCount Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=0
+
+Transition:
+  Supervisor.Idle->Supervisor.DispatchUploads { 1, tau, nextDrone := 0 }
+
+State:
+( Supervisor.DispatchUploads Sender0.Idle Drone0.WaitCount Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=0
+
+Transition:
+  Supervisor.DispatchUploads->Supervisor.Uploading { nextDrone == N - 1, begin_upload[nextDrone]!, 1 }
+  Sender0.Idle->Sender0.Announce { 1, begin_upload[id]?, 1 }
+
+State:
+( Supervisor.Uploading Sender0.Announce Drone0.WaitCount Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=0
+
+Transition:
+  Sender0.Announce->Sender0.WaitRequest { 1, count_tx[id]!, 1 }
+  Link.Idle->Link.Transmitting { 1, count_tx[0]?, storePacket(0, PK_COUNT, 0, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitCount Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=3 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=0
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitCount Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=3 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_COUNT && t >= D_MIN, count_rx[packet.peer]!, 1 }
+  Drone0.WaitCount->Drone0.RequestedItem { 1, count_rx[id]?, expectedCount := MISSION_SIZE, nextSequence := 0, receivedCount := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.RequestedItem Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=3 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.RequestedItem Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=3 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Drone0.RequestedItem->Drone0.WaitItem { 1, request_tx[id][nextSequence]!, 1 }
+  Link.Idle->Link.Transmitting { 1, request_tx[0][0]?, storePacket(0, PK_REQUEST, 0, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=1
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=2
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_REQUEST && t >= D_MIN, request_rx[packet.peer][packet.seq]!, 1 }
+  Sender0.WaitRequest->Sender0.SendItem { 1, request_rx[id][0]?, requested := 0 }
+
+State:
+( Supervisor.Uploading Sender0.SendItem Drone0.WaitItem Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=2
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.SendItem Drone0.WaitItem Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=2
+
+Transition:
+  Sender0.SendItem->Sender0.WaitRequest { 1, item_tx[id][requested]!, 1 }
+  Link.Idle->Link.Transmitting { 1, item_tx[0][0]?, storePacket(0, PK_ITEM, 0, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=2
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=3
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_ITEM && t >= D_MIN, item_rx[packet.peer][packet.seq]!, 1 }
+  Drone0.WaitItem->Drone0.RequestedItem { nextSequence < MISSION_SIZE - 1, item_rx[id][nextSequence]?, receivedCount := receivedCount + 1, nextSequence := nextSequence + 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.RequestedItem Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=3
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.RequestedItem Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=3
+
+Transition:
+  Drone0.RequestedItem->Drone0.WaitItem { 1, request_tx[id][nextSequence]!, 1 }
+  Link.Idle->Link.Transmitting { 1, request_tx[0][1]?, storePacket(0, PK_REQUEST, 1, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=3
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=4
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_REQUEST && t >= D_MIN, request_rx[packet.peer][packet.seq]!, 1 }
+  Sender0.WaitRequest->Sender0.SendItem { 1, request_rx[id][1]?, requested := 1 }
+
+State:
+( Supervisor.Uploading Sender0.SendItem Drone0.WaitItem Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=4
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.SendItem Drone0.WaitItem Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=4
+
+Transition:
+  Sender0.SendItem->Sender0.WaitRequest { 1, item_tx[id][requested]!, 1 }
+  Link.Idle->Link.Transmitting { 1, item_tx[0][1]?, storePacket(0, PK_ITEM, 1, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=4
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=1 Drone0.receivedCount=1 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=5
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_ITEM && t >= D_MIN, item_rx[packet.peer][packet.seq]!, 1 }
+  Drone0.WaitItem->Drone0.RequestedItem { nextSequence < MISSION_SIZE - 1, item_rx[id][nextSequence]?, receivedCount := receivedCount + 1, nextSequence := nextSequence + 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.RequestedItem Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=5
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.RequestedItem Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=1 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=5
+
+Transition:
+  Drone0.RequestedItem->Drone0.WaitItem { 1, request_tx[id][nextSequence]!, 1 }
+  Link.Idle->Link.Transmitting { 1, request_tx[0][2]?, storePacket(0, PK_REQUEST, 2, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=5
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=1 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=6
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_REQUEST && t >= D_MIN, request_rx[packet.peer][packet.seq]!, 1 }
+  Sender0.WaitRequest->Sender0.SendItem { 1, request_rx[id][2]?, requested := 2 }
+
+State:
+( Supervisor.Uploading Sender0.SendItem Drone0.WaitItem Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=6
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.SendItem Drone0.WaitItem Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=1 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=6
+
+Transition:
+  Sender0.SendItem->Sender0.WaitRequest { 1, item_tx[id][requested]!, 1 }
+  Link.Idle->Link.Transmitting { 1, item_tx[0][2]?, storePacket(0, PK_ITEM, 2, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=6
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.WaitItem Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=2 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=7
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_ITEM && t >= D_MIN, item_rx[packet.peer][packet.seq]!, 1 }
+  Drone0.WaitItem->Drone0.AckPending { nextSequence == MISSION_SIZE - 1, item_rx[id][nextSequence]?, receivedCount := receivedCount + 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.AckPending Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=7
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.AckPending Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=2 Link.packet.peer=0 Link.packet.seq=2 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=7
+
+Transition:
+  Drone0.AckPending->Drone0.Uploaded { 1, ack_tx[id]!, missionInstalled[id] := true }
+  Link.Idle->Link.Transmitting { 1, ack_tx[0]?, storePacket(0, PK_MISSION_ACK, 0, 0), t := 0 }
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.Uploaded Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=7
+
+Delay: 1
+
+State:
+( Supervisor.Uploading Sender0.WaitRequest Drone0.Uploaded Link.Transmitting CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=8
+
+Transition:
+  Link.Transmitting->Link.Delivered { packet.kind == PK_MISSION_ACK && t >= D_MIN, ack_rx[packet.peer]!, 1 }
+  Sender0.WaitRequest->Sender0.Done { 1, ack_rx[id]?, uploadDone[id] := true }
+
+State:
+( Supervisor.Uploading Sender0.Done Drone0.Uploaded Link.Delivered CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=8
+
+Transition:
+  Link.Delivered->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Uploading Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=8
+
+Transition:
+  Supervisor.Uploading->Supervisor.Prepared { forall(i:(const (label drone_id:(range (int) "0" "N - 1")))) uploadDone[i], tau, 1 }
+
+State:
+( Supervisor.Prepared Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=8
+
+Transition:
+  Supervisor.Prepared->Supervisor.Arming { 1, hurry!, 1 }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=8
+
+Transition:
+  Supervisor.Arming->Supervisor.Arming { !armSent[0], begin_command[0][ARM]!, armSent[0] := true }
+  CommandClient(0).Idle->CommandClient(0).Sending { 1, begin_command[id][0]?, current := 0, retries := 0 }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).Sending CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=1 Link.packet.dst=0 Link.packet.kind=3 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=8
+
+Transition:
+  CommandClient(0).Sending->CommandClient(0).WaitAck { 1, cmd_tx[id][current]!, x := 0 }
+  Link.Idle->Link.Transmitting { 1, cmd_tx[0][0]?, storePacket(0, PK_COMMAND, 0, 0), t := 0 }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Transmitting CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=0
+
+Delay: 1
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Transmitting CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Link.Transmitting->Link.Lost { lossCount < LOSS_BUDGET && LOSSY && t >= D_MIN && (packet.kind == PK_COMMAND || packet.kind == PK_ACCEPTED || packet.kind == PK_DENIED), tau, lossCount++ }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Lost CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=1 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Link.Lost->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=1 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Delay: 23
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=1 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0 Link.t=24 CommandClient(0).x=24
+
+Transition:
+  CommandClient(0).WaitAck->CommandClient(0).Sending { x >= ACK_TIMEOUT && retries < MAX_RETRY, tau, retries++ }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).Sending CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=1 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=24 CommandClient(0).x=24
+
+Transition:
+  CommandClient(0).Sending->CommandClient(0).WaitAck { 1, cmd_tx[id][current]!, x := 0 }
+  Link.Idle->Link.Transmitting { 1, cmd_tx[0][0]?, storePacket(0, PK_COMMAND, 0, 0), t := 0 }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Transmitting CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=1 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=0 CommandClient(0).x=0
+
+Delay: 1
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Transmitting CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=1 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Link.Transmitting->Link.Lost { lossCount < LOSS_BUDGET && LOSSY && t >= D_MIN && (packet.kind == PK_COMMAND || packet.kind == PK_ACCEPTED || packet.kind == PK_DENIED), tau, lossCount++ }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Lost CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=2 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Transition:
+  Link.Lost->Link.Idle { 1, tau, 1 }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=2 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=1 CommandClient(0).x=1
+
+Delay: 23
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).WaitAck CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=2 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=24 CommandClient(0).x=24
+
+Transition:
+  CommandClient(0).WaitAck->CommandClient(0).Failed { x >= ACK_TIMEOUT && retries == MAX_RETRY, tau, cmdFailed[id][current] := true }
+
+State:
+( Supervisor.Arming Sender0.Done Drone0.Uploaded Link.Idle CommandClient(0).Failed CommandServer(0).Idle )
+uploadDone[0]=1 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=1 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=1 Supervisor.nextDrone=0 Supervisor.armSent[0]=1 Supervisor.startSent[0]=0 Sender0.requested=2 Drone0.expectedCount=3 Drone0.nextSequence=2 Drone0.receivedCount=3 Link.packet.src=0 Link.packet.dst=1 Link.packet.kind=4 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=2 CommandClient(0).current=0 CommandClient(0).retries=1 CommandServer(0).current=0 Link.t=24 CommandClient(0).x=24

@@ -1,0 +1,2 @@
+model.xml:/nta/template[9]/transition[1]/label[2]:1: [warning] Clock guards are not allowed on urgent edges.
+EXCEPTION: Clock guards are not allowed on urgent edges.

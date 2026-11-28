@@ -24,8 +24,8 @@ The FL learning itself is abstracted, because SGD is difficult to model in that 
 | Main results are checkable and reproducible | rerunable queries, expected outputs, parameters and seeds documented |
 | Report: problem, methods, results, individual contributions at the end | Report plus `CONTRIBUTIONS.md` maintained by contributors |
 | Each member can explain their work | Partner review: nothing is done until a second person has reviewed and can explain it, also PRs to support that principles |
-| AI cannot replace verification, log substantive prompts | Every AI-generated model, property or script must pass the UPPAAL verifier or be revieved before implementing:`AI_Usage_Log.md` kept continuously |
-| Deliverables: report PDF, `AI Usage Log.md`, PPT | Kept in Repo |
+| AI cannot replace verification, log substantive prompts | Every AI-generated model, property or script must pass the UPPAAL verifier or be reviewed before implementation. |
+| Deliverables: report PDF, PPT | Kept in Repo |
 
 **What is needed?**
 
@@ -143,8 +143,7 @@ fl-uppaal/
 ├─ docs/
 │  ├─ proposal.md               this document
 │  ├─ property_catalog.md       all claims
-│  ├─ decisions_and_ideas.md              assumptions and design decisions
-│  └─ AI_usage_log.md           kept from day one
+│  └─ decisions_and_ideas.md              assumptions and design decisions
 ├─ models/
 │  ├─ 00_baseline.xml           frozen, never edited
 │  ├─ 01_..., 02_...            one file per milestone
@@ -164,8 +163,7 @@ Table here.
 Folder `Group X - Group Project - Project Title/` containing:
 1. `Project Report.pdf`, with each member's individual contribution at the end (printed copy at the presentation).
 2. `Project Source Code.zipor repo link`: models, queries, scripts, expected results, README with run instructions.
-3. `AI Usage Log.md`: substantive prompts and the project stage in which they were used.
-4. `Project PPT.pptx`, optionally with a short screen recording (a counterexample trace, an SMC run).
+3. `Project PPT.pptx`, optionally with a short screen recording (a counterexample trace, an SMC run).
 
 
 ## 10. Scope tiers

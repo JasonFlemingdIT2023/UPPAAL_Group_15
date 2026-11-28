@@ -1,0 +1,26 @@
+{
+  "runs": {
+    "activation": [
+      "20261125T132211639271Z_E05"
+    ],
+    "settings": [
+      "20261125T132837695506Z_E05",
+      "20261125T132842193789Z_E05"
+    ],
+    "diagnostics": [
+      "20261125T132858259371Z_E05",
+      "20261125T132901222330Z_E05",
+      "20261125T132904048744Z_E05"
+    ],
+    "search_order_control": [
+      "20261125T132946203724Z_E05"
+    ]
+  },
+  "expected_counts": {
+    "activation": 24,
+    "settings": 8,
+    "diagnostics": 4,
+    "search_order_control": 1
+  },
+  "measurement_note": "Single BFS measurement per configuration/query; DFS witnesses are supplemental and excluded from BFS cost comparisons."
+}

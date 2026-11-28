@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+//---------
+//Channels and variables for the base model
+//---------
+//Model size
+const int N = 3;
+//Mission budget
+const int MISSION_SIZE = 3;
+
+
+typedef int[0,N-1] drone_id;
+typedef int[0, MISSION_SIZE-1] item_id;
+
+
+// --------
+// Channels and Variables regarding the Mission Protocol
+//---------
+// internal gcs interaction
+chan begin_upload[N];
+// network interfaces and channels for mission announcments, sending and delivery, state between network
+chan count_tx[N];
+chan count_rx[N];
+
+chan item_tx[N][MISSION_SIZE];
+chan item_rx[N][MISSION_SIZE];
+
+chan ack_tx[N];
+chan ack_rx[N];
+
+//Channels for item requests of drones
+chan request_tx[N][MISSION_SIZE];
+chan request_rx[N][MISSION_SIZE];
+
+//Variable to perceive if the item transfer is done
+bool uploadDone[N];
+
+
+//---------
+// Channels and variables regarding the Heartbeat Protocol
+//---------
+const int HB_PERIOD = 20;
+
+// Drone sends the heartbeat to network under the urgent scheduling assumption
+urgent chan heartbeat_tx[N];
+chan heartbeat_rx[N];
+// has it arrived at GCS
+bool heartbeatSeen[N];
+
+
+
+// ***************************************************************************
+// * MAVLink COMMAND protocol (COMMAND / COMMAND_ACK)  - model 03            *
+// * After Prepared, the GCS sends ARM to every drone, then START.           *
+// * CommandClient = GCS side, CommandServer = drone side.                   *
+// ***************************************************************************
+
+// Test setting: true = the network may lose any command-protocol message
+// (COMMAND or COMMAND_ACK). Mission-protocol messages are never lost.
+const int LOSS_BUDGET = 1;
+const bool LOSSY = true;
+
+const int NB_CMD = 2;
+typedef int[0,NB_CMD-1] cmd_id;
+const int ARM = 0;
+const int START = 1;
+
+// Timeout and retry (CommandClient)
+// Existing client timeout; recheck with variable delay and heartbeat traffic.
+const int ACK_TIMEOUT = 24;
+const int MAX_RETRY = 0;              // re-sends after the first try (3 tries in total)
+
+// "urgent chan": the synchronisation happens as soon as both sides are ready
+// (time cannot pass while it is possible), but time CAN pass while the
+// network is busy. An urgent location would forbid that and cause a timelock.
+// Supervisor -&gt; CommandClient (internal GCS request)
+urgent chan begin_command[N][NB_CMD];
+
+// COMMAND: CommandClient -&gt; network -&gt; CommandServer
+urgent chan cmd_tx[N][NB_CMD];
+chan cmd_rx[N][NB_CMD];
+
+// COMMAND_ACK accepted / denied: CommandServer -&gt; network -&gt; CommandClient
+urgent chan accepted_tx[N][NB_CMD], denied_tx[N][NB_CMD];
+chan accepted_rx[N][NB_CMD], denied_rx[N][NB_CMD];
+
+// Broadcast with no receiver: forces the supervisor to move on as soon as
+// its guard is true (instead of possibly waiting forever)
+urgent broadcast chan hurry;
+
+// What the GCS knows (set by CommandClient)
+bool cmdAccepted[N][NB_CMD];
+bool cmdDenied[N][NB_CMD];
+bool cmdFailed[N][NB_CMD];  // no ACK after all the tries
+
+// What is really true on the drone (set by CommandServer)
+bool armed[N];
+bool started[N];
+
+// Set by MissionReceiver when its mission is complete (on the ACK edge)
+bool missionInstalled[N];
+
+
+
+//---------
+//Channels and Variables for the standalone network implementation and conncetion to protcols
+//---------
+// endpoint adresses
+const int N_ENDPOINTS = N + 1;
+const int GCS_ENDPOINT = 0;
+typedef int[0, N_ENDPOINTS-1] endpoint_id;
+
+//Packet Kinds
+
+const int N_KINDS = 8;
+typedef int[0,N_KINDS-1] kind_id;
+//internal model and not MAVLink message norm
+const int PK_COUNT = 0;
+const int PK_REQUEST = 1;
+const int PK_ITEM = 2;
+const int PK_MISSION_ACK = 3;
+const int PK_COMMAND = 4;
+const int PK_ACCEPTED = 5;
+const int PK_DENIED = 6;
+const int PK_HEARTBEAT = 7;
+
+//packet structure
+typedef struct {
+   endpoint_id src;
+    endpoint_id dst;
+    kind_id kind;
+    drone_id peer;
+    item_id seq; //regards mission perotcol
+    int[0, MISSION_SIZE] count;
+    cmd_id cmd;// regards cmd protocol
+} packet_t;
+
+// Transmission window in model time units
+const int D_MIN = 1;
+const int D_MAX = 3;
+</declaration>
+	<template>
+		<name>PacketNetwork</name>
+		<declaration>clock t;
+packet_t packet;
+int[0, LOSS_BUDGET] lossCount = 0;
+
+void storePacket(drone_id d, kind_id k, item_id s, cmd_id c) {
+    packet.peer = d;
+    packet.kind = k;
+    packet.seq = s;
+    packet.cmd = c;
+    packet.count = (k == PK_COUNT ? MISSION_SIZE : 0);
+    if (k == PK_COUNT || k == PK_ITEM || k == PK_COMMAND) {
+        packet.src = GCS_ENDPOINT;
+        packet.dst = d + 1;
+    } else {
+        packet.src = d + 1;
+        packet.dst = GCS_ENDPOINT;
+    }
+}
+</declaration>
+		<location id="id0" x="300" y="0">
+			<name x="265" y="-35">Idle</name>
+		</location>
+		<location id="id1" x="1000" y="0">
+			<name x="965" y="-35">Transmitting</name>
+			<label kind="invariant" x="1020" y="20">t &lt;= D_MAX</label>
+		</location>
+		<location id="id2" x="1700" y="0">
+			<name x="1665" y="-35">Delivered</name>
+			<committed/>
+		</location>
+		<location id="id3" x="1000" y="350">
+			<name x="965" y="315">Lost</name>
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-190">packet.kind == PK_HEARTBEAT &amp;&amp; t &gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-167">heartbeat_rx[packet.peer]!</label>
+			<nail x="1050" y="-142"/>
+			<nail x="1650" y="-142"/>
+		</transition>
+		<transition id="id5">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-212">d : drone_id</label>
+			<label kind="synchronisation" x="420" y="-174">heartbeat_tx[d]?</label>
+			<label kind="assignment" x="420" y="-157">storePacket(d, PK_HEARTBEAT, 0, 0), t = 0</label>
+			<nail x="350" y="-142"/>
+			<nail x="950" y="-142"/>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-502">packet.kind == PK_MISSION_ACK &amp;&amp; t &gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-479">ack_rx[packet.peer]!</label>
+			<nail x="1050" y="-454"/>
+			<nail x="1650" y="-454"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-580">packet.kind == PK_ITEM &amp;&amp; t &gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-557">item_rx[packet.peer][packet.seq]!</label>
+			<nail x="1050" y="-532"/>
+			<nail x="1650" y="-532"/>
+		</transition>
+		<transition id="id8">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-524">d : drone_id</label>
+			<label kind="synchronisation" x="420" y="-486">ack_tx[d]?</label>
+			<label kind="assignment" x="420" y="-469">storePacket(d, PK_MISSION_ACK, 0, 0), t = 0</label>
+			<nail x="350" y="-454"/>
+			<nail x="950" y="-454"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-602">d : drone_id,
+s : item_id</label>
+			<label kind="synchronisation" x="420" y="-564">item_tx[d][s]?</label>
+			<label kind="assignment" x="420" y="-547">storePacket(d, PK_ITEM, s, 0), t = 0</label>
+			<nail x="350" y="-532"/>
+			<nail x="950" y="-532"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-658">packet.kind == PK_REQUEST &amp;&amp; t&gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-635">request_rx[packet.peer][packet.seq]!</label>
+			<nail x="1050" y="-610"/>
+			<nail x="1650" y="-610"/>
+		</transition>
+		<transition id="id11">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-680">d: drone_id, s : item_id</label>
+			<label kind="synchronisation" x="420" y="-642">request_tx[d][s]?</label>
+			<label kind="assignment" x="420" y="-625">storePacket(d, PK_REQUEST, s, 0), t = 0</label>
+			<nail x="350" y="-610"/>
+			<nail x="950" y="-610"/>
+		</transition>
+		<transition id="id12">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-736">packet.kind == PK_COUNT &amp;&amp; t &gt;=D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-713">count_rx[packet.peer]!</label>
+			<nail x="1050" y="-688"/>
+			<nail x="1650" y="-688"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-758">d : drone_id</label>
+			<label kind="synchronisation" x="420" y="-720">count_tx[d]?</label>
+			<label kind="assignment" x="420" y="-703">storePacket(d, PK_COUNT, 0, 0), t = 0</label>
+			<nail x="350" y="-688"/>
+			<nail x="950" y="-688"/>
+		</transition>
+		<transition id="id14">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-446">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="420" y="-408">cmd_tx[d][c]?</label>
+			<label kind="assignment" x="420" y="-391">storePacket(d, PK_COMMAND, 0, c), t = 0</label>
+			<nail x="350" y="-376"/>
+			<nail x="950" y="-376"/>
+		</transition>
+		<transition id="id15">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-368">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="420" y="-330">accepted_tx[d][c]?</label>
+			<label kind="assignment" x="420" y="-313">storePacket(d, PK_ACCEPTED, 0, c), t = 0</label>
+			<nail x="350" y="-298"/>
+			<nail x="950" y="-298"/>
+		</transition>
+		<transition id="id16">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="420" y="-290">d : drone_id, c : cmd_id</label>
+			<label kind="synchronisation" x="420" y="-252">denied_tx[d][c]?</label>
+			<label kind="assignment" x="420" y="-235">storePacket(d, PK_DENIED, 0, c), t = 0</label>
+			<nail x="350" y="-220"/>
+			<nail x="950" y="-220"/>
+		</transition>
+		<transition id="id17">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-424">packet.kind == PK_COMMAND &amp;&amp; t &gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-401">cmd_rx[packet.peer][packet.cmd]!</label>
+			<nail x="1050" y="-376"/>
+			<nail x="1650" y="-376"/>
+		</transition>
+		<transition id="id18">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-346">packet.kind == PK_ACCEPTED &amp;&amp; t &gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-323">accepted_rx[packet.peer][packet.cmd]!</label>
+			<nail x="1050" y="-298"/>
+			<nail x="1650" y="-298"/>
+		</transition>
+		<transition id="id19">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="1120" y="-268">packet.kind == PK_DENIED &amp;&amp; t &gt;= D_MIN</label>
+			<label kind="synchronisation" x="1120" y="-245">denied_rx[packet.peer][packet.cmd]!</label>
+			<nail x="1050" y="-220"/>
+			<nail x="1650" y="-220"/>
+		</transition>
+		<transition id="id20">
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<nail x="1708" y="399"/>
+			<nail x="300" y="399"/>
+		</transition>
+		<transition id="id21">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<nail x="700" y="350"/>
+			<nail x="300" y="350"/>
+		</transition>
+		<transition id="id22">
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="331" y="187">lossCount &lt; LOSS_BUDGET &amp;&amp; LOSSY &amp;&amp; t &gt;= D_MIN &amp;&amp; (packet.kind == PK_COMMAND || packet.kind == PK_ACCEPTED || packet.kind == PK_DENIED)</label>
+		<label kind="assignment" x="331" y="207">lossCount++</label>
+		</transition>
+	</template>
+	<template>
+		<name>ConnectionMonitor</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>clock age;</declaration>
+		<location id="id23" x="-450" y="0">
+			<name x="-460" y="-34">Unknown</name>
+		</location>
+		<location id="id24" x="-161" y="0">
+			<name x="-171" y="-34">Tracking</name>
+		</location>
+		<init ref="id23"/>
+		<transition id="id25">
+			<source ref="id24"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-76" y="-51">heartbeat_rx[id]?</label>
+			<label kind="assignment" x="-68" y="-34">age = 0</label>
+			<nail x="-110" y="68"/>
+			<nail x="-51" y="8"/>
+			<nail x="-110" y="-51"/>
+		</transition>
+		<transition id="id26">
+			<source ref="id23"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-391" y="0">heartbeat_rx[id]?</label>
+			<label kind="assignment" x="-442" y="17">age = 0, heartbeatSeen[id] = true</label>
+		</transition>
+	</template>
+	<template>
+		<name>HBSender</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>clock period;</declaration>
+		<location id="id27" x="-127" y="144">
+			<name x="-137" y="110">Waiting</name>
+			<label kind="invariant" x="-306" y="144">period &lt;=HB_PERIOD</label>
+		</location>
+		<location id="id28" x="51" y="144">
+			<name x="41" y="110">Pending</name>
+		</location>
+		<init ref="id27"/>
+		<transition id="id29">
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="-24" y="80">heartbeat_tx[id]!</label>
+			<label kind="assignment" x="-24" y="97">period = 0</label>
+			<nail x="-42" y="51"/>
+		</transition>
+		<transition id="id30">
+			<source ref="id27"/>
+			<target ref="id28"/>
+			<label kind="guard" x="-127" y="153">period &gt;= HB_PERIOD</label>
+		</transition>
+	</template>
+	<template>
+		<name>GCSSupervisor</name>
+		<declaration>int[0,N-1] nextDrone = 0;
+
+// Command phase: drones that already received the command
+bool armSent[N];
+bool startSent[N];</declaration>
+		<location id="id31" x="-586" y="-68">
+			<name x="-596" y="-102">Idle</name>
+		</location>
+		<location id="id32" x="-365" y="-68">
+			<name x="-375" y="-102">DispatchUploads</name>
+		</location>
+		<location id="id33" x="-85" y="-68">
+			<name x="-119" y="-102">Uploading</name>
+		</location>
+		<location id="id34" x="229" y="-68">
+			<name x="195" y="-102">Prepared</name>
+		</location>
+		<location id="id35" x="527" y="-68">
+			<name x="500" y="-102">Arming</name>
+		</location>
+		<location id="id36" x="867" y="-68">
+			<name x="840" y="-102">Starting</name>
+		</location>
+		<location id="id37" x="1207" y="-68">
+			<name x="1190" y="-102">Done</name>
+		</location>
+		<location id="id38" x="867" y="170">
+			<name x="840" y="187">Aborted</name>
+		</location>
+		<init ref="id31"/>
+		<transition id="id39">
+			<source ref="id33"/>
+			<target ref="id34"/>
+			<label kind="guard" x="-76" y="-51">forall (i : drone_id) uploadDone[i]</label>
+		</transition>
+		<transition id="id40">
+			<source ref="id32"/>
+			<target ref="id32"/>
+			<label kind="guard" x="-425" y="85">nextDrone &lt; N-1</label>
+			<label kind="synchronisation" x="-459" y="51">begin_upload[nextDrone]!</label>
+			<label kind="assignment" x="-450" y="68">nextDrone = nextDrone + 1</label>
+			<nail x="-297" y="-8"/>
+			<nail x="-357" y="51"/>
+			<nail x="-433" y="-8"/>
+		</transition>
+		<transition id="id41">
+			<source ref="id32"/>
+			<target ref="id33"/>
+			<label kind="guard" x="-289" y="-51">nextDrone == N-1</label>
+			<label kind="synchronisation" x="-331" y="-68">begin_upload[nextDrone]!</label>
+		</transition>
+		<transition id="id42">
+			<source ref="id31"/>
+			<target ref="id32"/>
+			<label kind="assignment" x="-568" y="-68">nextDrone = 0</label>
+		</transition>
+		<transition id="id43">
+			<source ref="id34"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="300" y="-93">hurry!</label>
+		</transition>
+		<transition id="id44">
+			<source ref="id35"/>
+			<target ref="id35"/>
+			<label kind="select" x="457" y="-280">i : drone_id</label>
+			<label kind="guard" x="457" y="-263">!armSent[i]</label>
+			<label kind="synchronisation" x="457" y="-246">begin_command[i][ARM]!</label>
+			<label kind="assignment" x="457" y="-229">armSent[i] = true</label>
+			<nail x="467" y="-200"/>
+			<nail x="587" y="-200"/>
+		</transition>
+		<transition id="id45">
+			<source ref="id35"/>
+			<target ref="id36"/>
+			<label kind="guard" x="560" y="-59">forall (i : drone_id) cmdAccepted[i][ARM]</label>
+			<label kind="synchronisation" x="560" y="-42">hurry!</label>
+		</transition>
+		<transition id="id46">
+			<source ref="id35"/>
+			<target ref="id38"/>
+			<label kind="guard" x="400" y="110">exists (i : drone_id) (cmdDenied[i][ARM] || cmdFailed[i][ARM])</label>
+			<label kind="synchronisation" x="400" y="127">hurry!</label>
+			<nail x="527" y="170"/>
+		</transition>
+		<transition id="id47">
+			<source ref="id36"/>
+			<target ref="id36"/>
+			<label kind="select" x="797" y="-280">i : drone_id</label>
+			<label kind="guard" x="797" y="-263">!startSent[i]</label>
+			<label kind="synchronisation" x="797" y="-246">begin_command[i][START]!</label>
+			<label kind="assignment" x="797" y="-229">startSent[i] = true</label>
+			<nail x="807" y="-200"/>
+			<nail x="927" y="-200"/>
+		</transition>
+		<transition id="id48">
+			<source ref="id36"/>
+			<target ref="id37"/>
+			<label kind="guard" x="900" y="-59">forall (i : drone_id) cmdAccepted[i][START]</label>
+			<label kind="synchronisation" x="900" y="-42">hurry!</label>
+		</transition>
+		<transition id="id49">
+			<source ref="id36"/>
+			<target ref="id38"/>
+			<label kind="guard" x="877" y="40">exists (i : drone_id) (cmdDenied[i][START] || cmdFailed[i][START])</label>
+			<label kind="synchronisation" x="877" y="57">hurry!</label>
+		</transition>
+	</template>
+	<template>
+		<name>MissionReceiver</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>//Anouncde Number of mission items
+int[0,MISSION_SIZE] expectedCount = 0;
+//Index of item beign requested right now
+item_id nextSequence = 0;
+//Number of accepted items
+int[0,MISSION_SIZE] receivedCount = 0;</declaration>
+		<location id="id50" x="-331" y="0">
+			<name x="-341" y="-34">WaitCount</name>
+		</location>
+		<location id="id51" x="110" y="0">
+			<name x="59" y="-34">RequestedItem</name>
+		</location>
+		<location id="id52" x="357" y="0">
+			<name x="323" y="-34">WaitItem</name>
+		</location>
+		<location id="id53" x="357" y="212">
+			<name x="347" y="178">AckPending</name>
+		</location>
+		<location id="id54" x="102" y="212">
+			<name x="92" y="178">Uploaded</name>
+		</location>
+		<init ref="id50"/>
+		<transition id="id55">
+			<source ref="id53"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="178" y="187">ack_tx[id]!</label>
+			<label kind="assignment" x="130" y="229">missionInstalled[id] = true</label>
+		</transition>
+		<transition id="id56">
+			<source ref="id52"/>
+			<target ref="id51"/>
+			<label kind="guard" x="68" y="-204">nextSequence &lt; MISSION_SIZE - 1</label>
+			<label kind="synchronisation" x="68" y="-187">item_rx[id][nextSequence]?</label>
+			<label kind="assignment" x="68" y="-170">receivedCount = receivedCount + 1,
+nextSequence = nextSequence + 1</label>
+			<nail x="195" y="-127"/>
+		</transition>
+		<transition id="id57">
+			<source ref="id52"/>
+			<target ref="id53"/>
+			<label kind="guard" x="357" y="72">nextSequence == MISSION_SIZE - 1</label>
+			<label kind="synchronisation" x="357" y="89">item_rx[id][nextSequence]?</label>
+			<label kind="assignment" x="357" y="106">receivedCount = receivedCount + 1</label>
+		</transition>
+		<transition id="id58">
+			<source ref="id51"/>
+			<target ref="id52"/>
+			<label kind="synchronisation" x="110" y="8">request_tx[id][nextSequence]!</label>
+		</transition>
+		<transition id="id59">
+			<source ref="id50"/>
+			<target ref="id51"/>
+			<label kind="synchronisation" x="-144" y="-25">count_rx[id]?</label>
+			<label kind="assignment" x="-221" y="8">expectedCount = MISSION_SIZE,
+ nextSequence = 0,
+ receivedCount = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">MissionSender</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>item_id requested = 0;
+
+</declaration>
+		<location id="id60" x="-433" y="-51">
+			<name x="-443" y="-85">Idle</name>
+		</location>
+		<location id="id61" x="-144" y="-51">
+			<name x="-154" y="-85">Announce</name>
+		</location>
+		<location id="id62" x="76" y="-51">
+			<name x="66" y="-85">WaitRequest</name>
+		</location>
+		<location id="id63" x="280" y="-51">
+			<name x="270" y="-85">SendItem</name>
+		</location>
+		<location id="id64" x="76" y="119">
+			<name x="66" y="85">Done</name>
+		</location>
+		<init ref="id60"/>
+		<transition id="id65">
+			<source ref="id62"/>
+			<target ref="id64"/>
+			<label kind="synchronisation" x="-25" y="59">ack_rx[id]?</label>
+			<label kind="assignment" x="-110" y="34">uploadDone[id] = true</label>
+		</transition>
+		<transition id="id66">
+			<source ref="id63"/>
+			<target ref="id62"/>
+			<label kind="synchronisation" x="76" y="-187">item_tx[id][requested]!</label>
+			<nail x="170" y="-161"/>
+		</transition>
+		<transition id="id67">
+			<source ref="id62"/>
+			<target ref="id63"/>
+			<label kind="select" x="110" y="-25">s : item_id</label>
+			<label kind="synchronisation" x="110" y="-42">request_rx[id][s]?</label>
+			<label kind="assignment" x="110" y="0">requested = s</label>
+		</transition>
+		<transition id="id68">
+			<source ref="id61"/>
+			<target ref="id62"/>
+			<label kind="synchronisation" x="-127" y="-42">count_tx[id]!</label>
+		</transition>
+		<transition id="id69">
+			<source ref="id60"/>
+			<target ref="id61"/>
+			<label kind="synchronisation" x="-374" y="-42">begin_upload[id]?</label>
+		</transition>
+	</template>
+	<template>
+		<name>CommandClient</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>// GCS side of the command protocol for drone id.
+// Sends one COMMAND and waits for its COMMAND_ACK.
+// No ACK after ACK_TIMEOUT: sends the COMMAND again (at most MAX_RETRY times),
+// then gives up in Failed.
+// Late ACKs (from an earlier try, arriving after a timeout) are accepted
+// and ignored by the loops, otherwise the network would stay blocked.
+
+// Command currently being handled
+cmd_id current = 0;
+// Re-sends done for the current command
+int[0,MAX_RETRY] retries = 0;
+// Time since the last send
+clock x;</declaration>
+		<location id="id70" x="0" y="0">
+			<name x="-30" y="-34">Idle</name>
+		</location>
+		<location id="id71" x="300" y="0">
+			<name x="270" y="-34">Sending</name>
+		</location>
+		<location id="id72" x="600" y="0">
+			<name x="570" y="-34">WaitAck</name>
+			<label kind="invariant" x="570" y="17">x &lt;= ACK_TIMEOUT</label>
+		</location>
+		<location id="id73" x="950" y="0">
+			<name x="920" y="-34">Failed</name>
+		</location>
+		<init ref="id70"/>
+		<transition id="id74">
+			<source ref="id71"/>
+			<target ref="id70"/>
+			<label kind="synchronisation" x="17" y="-229">denied_rx[id][current]?</label>
+			<label kind="assignment" x="17" y="-212">cmdDenied[id][current] = true</label>
+			<nail x="297" y="-187"/>
+			<nail x="0" y="-187"/>
+			<nail x="0" y="-17"/>
+		</transition>
+		<transition id="id75">
+			<source ref="id71"/>
+			<target ref="id70"/>
+			<label kind="synchronisation" x="17" y="-144">accepted_rx[id][current]?</label>
+			<label kind="assignment" x="17" y="-127">cmdAccepted[id][current] = true</label>
+			<nail x="297" y="-144"/>
+			<nail x="0" y="-144"/>
+		</transition>
+		<transition id="id76">
+			<source ref="id70"/>
+			<target ref="id71"/>
+			<label kind="select" x="20" y="-70">c : cmd_id</label>
+			<label kind="synchronisation" x="20" y="-53">begin_command[id][c]?</label>
+			<label kind="assignment" x="20" y="-36">current = c, retries = 0</label>
+		</transition>
+		<transition id="id77">
+			<source ref="id71"/>
+			<target ref="id72"/>
+			<label kind="synchronisation" x="330" y="-36">cmd_tx[id][current]!</label>
+			<label kind="assignment" x="330" y="-19">x = 0</label>
+		</transition>
+		<transition id="id78">
+			<source ref="id72"/>
+			<target ref="id71"/>
+			<label kind="guard" x="330" y="-200">x &gt;= ACK_TIMEOUT &amp;&amp; retries &lt; MAX_RETRY</label>
+			<label kind="assignment" x="330" y="-183">retries++</label>
+			<nail x="600" y="-150"/>
+			<nail x="300" y="-150"/>
+		</transition>
+		<transition id="id79">
+			<source ref="id72"/>
+			<target ref="id73"/>
+			<label kind="guard" x="640" y="-53">x &gt;= ACK_TIMEOUT &amp;&amp; retries == MAX_RETRY</label>
+			<label kind="assignment" x="640" y="-36">cmdFailed[id][current] = true</label>
+		</transition>
+		<transition id="id80">
+			<source ref="id72"/>
+			<target ref="id70"/>
+			<label kind="synchronisation" x="180" y="145">accepted_rx[id][current]?</label>
+			<label kind="assignment" x="180" y="162">cmdAccepted[id][current] = true</label>
+			<nail x="600" y="140"/>
+			<nail x="0" y="140"/>
+		</transition>
+		<transition id="id81">
+			<source ref="id72"/>
+			<target ref="id70"/>
+			<label kind="synchronisation" x="180" y="265">denied_rx[id][current]?</label>
+			<label kind="assignment" x="180" y="282">cmdDenied[id][current] = true</label>
+			<nail x="600" y="260"/>
+			<nail x="0" y="260"/>
+		</transition>
+		<transition id="id82">
+			<source ref="id70"/>
+			<target ref="id70"/>
+			<label kind="select" x="-230" y="-60">c : cmd_id</label>
+			<label kind="synchronisation" x="-230" y="-43">accepted_rx[id][c]?</label>
+			<nail x="-60" y="-50"/>
+			<nail x="-60" y="-10"/>
+		</transition>
+		<transition id="id83">
+			<source ref="id70"/>
+			<target ref="id70"/>
+			<label kind="select" x="-230" y="10">c : cmd_id</label>
+			<label kind="synchronisation" x="-230" y="27">denied_rx[id][c]?</label>
+			<nail x="-60" y="10"/>
+			<nail x="-60" y="50"/>
+		</transition>
+		<transition id="id84">
+			<source ref="id71"/>
+			<target ref="id71"/>
+			<label kind="select" x="220" y="50">c : cmd_id</label>
+			<label kind="guard" x="314" y="93">c != current</label>
+			<label kind="synchronisation" x="220" y="67">accepted_rx[id][c]?</label>
+			<nail x="270" y="50"/>
+			<nail x="330" y="50"/>
+		</transition>
+		<transition id="id85">
+			<source ref="id71"/>
+			<target ref="id71"/>
+			<label kind="select" x="220" y="90">c : cmd_id</label>
+			<label kind="guard" x="278" y="56">c != current</label>
+			<label kind="synchronisation" x="220" y="107">denied_rx[id][c]?</label>
+			<nail x="260" y="90"/>
+			<nail x="340" y="90"/>
+		</transition>
+		<transition id="id86">
+			<source ref="id72"/>
+			<target ref="id72"/>
+			<label kind="select" x="660" y="50">c : cmd_id</label>
+			<label kind="guard" x="660" y="67">c != current</label>
+			<label kind="synchronisation" x="660" y="84">accepted_rx[id][c]?</label>
+			<nail x="640" y="50"/>
+			<nail x="640" y="100"/>
+		</transition>
+		<transition id="id87">
+			<source ref="id72"/>
+			<target ref="id72"/>
+			<label kind="select" x="660" y="110">c : cmd_id</label>
+			<label kind="guard" x="660" y="127">c != current</label>
+			<label kind="synchronisation" x="660" y="144">denied_rx[id][c]?</label>
+			<nail x="650" y="110"/>
+			<nail x="650" y="160"/>
+		</transition>
+		<transition id="id88">
+			<source ref="id73"/>
+			<target ref="id73"/>
+			<label kind="select" x="1000" y="-60">c : cmd_id</label>
+			<label kind="synchronisation" x="1000" y="-43">accepted_rx[id][c]?</label>
+			<nail x="1010" y="-50"/>
+			<nail x="1010" y="-10"/>
+		</transition>
+		<transition id="id89">
+			<source ref="id73"/>
+			<target ref="id73"/>
+			<label kind="select" x="1000" y="10">c : cmd_id</label>
+			<label kind="synchronisation" x="1000" y="27">denied_rx[id][c]?</label>
+			<nail x="1010" y="10"/>
+			<nail x="1010" y="50"/>
+		</transition>
+	</template>
+	<template>
+		<name>CommandServer</name>
+		<parameter>const drone_id id</parameter>
+		<declaration>// Drone side of the command protocol for drone id.
+// Checks a received COMMAND and answers with COMMAND_ACK.
+// A COMMAND that arrives while the previous one is still being answered
+// (a re-send after a timeout) is ignored: the answer on its way covers it.
+
+// Command currently being handled
+cmd_id current = 0;
+
+// Can the drone execute this command now?
+bool canExecute(cmd_id c) {
+    if (c == ARM) {
+        return missionInstalled[id];   // ARM: a mission must be installed
+    }
+    return armed[id];                  // START: the drone must be armed
+}
+
+// Effect of an accepted command on the real drone state
+void execute(cmd_id c) {
+    if (c == ARM) {
+        armed[id] = true;
+    } else {
+        started[id] = true;
+    }
+}</declaration>
+		<location id="id90" x="0" y="0">
+			<name x="-30" y="-34">Idle</name>
+		</location>
+		<location id="id91" x="350" y="0">
+			<name x="320" y="-34">Decide</name>
+		</location>
+		<init ref="id90"/>
+		<transition id="id92">
+			<source ref="id90"/>
+			<target ref="id91"/>
+			<label kind="select" x="40" y="-70">c : cmd_id</label>
+			<label kind="synchronisation" x="40" y="-53">cmd_rx[id][c]?</label>
+			<label kind="assignment" x="40" y="-36">current = c</label>
+		</transition>
+		<transition id="id93">
+			<source ref="id91"/>
+			<target ref="id90"/>
+			<label kind="guard" x="80" y="-250">canExecute(current)</label>
+			<label kind="synchronisation" x="80" y="-233">accepted_tx[id][current]!</label>
+			<label kind="assignment" x="80" y="-216">execute(current)</label>
+			<nail x="350" y="-180"/>
+			<nail x="0" y="-180"/>
+		</transition>
+		<transition id="id94">
+			<source ref="id91"/>
+			<target ref="id90"/>
+			<label kind="guard" x="80" y="155">!canExecute(current)</label>
+			<label kind="synchronisation" x="80" y="172">denied_tx[id][current]!</label>
+			<nail x="350" y="150"/>
+			<nail x="0" y="150"/>
+		</transition>
+		<transition id="id95">
+			<source ref="id91"/>
+			<target ref="id91"/>
+			<label kind="select" x="420" y="-30">c : cmd_id</label>
+			<label kind="synchronisation" x="420" y="-13">cmd_rx[id][c]?</label>
+			<nail x="410" y="-30"/>
+			<nail x="410" y="30"/>
+		</transition>
+	</template>
+	<system>
+Supervisor = GCSSupervisor();
+Sender0 = MissionSender(0);
+Sender1 = MissionSender(1);
+Sender2 = MissionSender(2);
+Drone0 = MissionReceiver(0);
+Drone1 = MissionReceiver(1);
+Drone2 = MissionReceiver(2);
+Link = PacketNetwork();
+system Supervisor, Sender0, Sender1, Sender2, Drone0, Drone1, Drone2, Link, CommandClient, CommandServer;
+</system>
+	<queries><query><formula>E&lt;&gt; Supervisor.Done</formula><comment>Safe GUI starter; experiment uses external queries.q.</comment></query></queries>
+</nta>

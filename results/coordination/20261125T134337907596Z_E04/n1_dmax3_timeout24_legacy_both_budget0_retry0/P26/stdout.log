@@ -1,0 +1,20 @@
+Options for the verification:
+  Generating some trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at query.q:2
+ -- Formula is NOT satisfied.
+ -- States explored : 0 states
+ -- CPU user time used : 0 ms
+ -- Virtual memory used : 60232 KiB
+ -- Resident memory used : 20444 KiB
+ -- Showing witness trace:
+
+State:
+( Supervisor.Idle Sender0.Idle Drone0.WaitCount Link.Idle CommandClient(0).Idle CommandServer(0).Idle )
+uploadDone[0]=0 heartbeatSeen[0]=0 cmdAccepted[0][0]=0 cmdAccepted[0][1]=0 cmdDenied[0][0]=0 cmdDenied[0][1]=0 cmdFailed[0][0]=0 cmdFailed[0][1]=0 armed[0]=0 started[0]=0 missionInstalled[0]=0 Supervisor.nextDrone=0 Supervisor.armSent[0]=0 Supervisor.startSent[0]=0 Sender0.requested=0 Drone0.expectedCount=0 Drone0.nextSequence=0 Drone0.receivedCount=0 Link.packet.src=0 Link.packet.dst=0 Link.packet.kind=0 Link.packet.peer=0 Link.packet.seq=0 Link.packet.count=0 Link.packet.cmd=0 Link.lossCount=0 CommandClient(0).current=0 CommandClient(0).retries=0 CommandServer(0).current=0
+Link.t-CommandClient(0).x<=0 and CommandClient(0).x-Link.t<=0

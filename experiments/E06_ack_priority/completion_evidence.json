@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-26",
+  "target": "Supervisor.Prepared --> Supervisor.Done",
+  "boundary_run": "20261125T171730362946Z_E06_prepared_boundary",
+  "progress_run": "20261125T171822124561Z_E06_prepared_progress",
+  "extended_direct_run": "20261125T171027951246Z_E06",
+  "extended_direct_status": "interrupted_after_compositional_proof",
+  "extended_direct_elapsed_seconds": 814.338,
+  "auxiliary_timer_runs": [
+    "20261125T171329261796Z_E06_completion_bound",
+    "20261125T171417304176Z_E06_completion_bound"
+  ],
+  "excluded_attempts": {
+    "20261125T171746592990Z_E06_prepared_progress": "Bootstrap used a clock guard on an urgent edge, which verifyta rejects. Corrected to an ordinary broadcast with the existing time invariant; no property result from this attempt."
+  },
+  "method": "Verified Prepared boundary plus exact universal completion on a post-Prepared over-approximation. The transition-preservation audit and the written coverage argument connect the two results.",
+  "coverage_argument": "docs/experiment_results_E06_completion.md"
+}

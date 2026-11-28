@@ -1,0 +1,242 @@
+{
+  "runs": {
+    "priority_exact_attempt": [
+      "20261125T150937929404Z_E06"
+    ],
+    "priority_overapprox_safety": [
+      "20261125T151436335265Z_E06"
+    ],
+    "priority_overapprox_core": [
+      "20261125T151604401166Z_E06"
+    ],
+    "priority_exact_lu": [
+      "20261125T151714568675Z_E06"
+    ],
+    "small_exact": [
+      "20261125T151946383393Z_E06",
+      "20261125T151949965320Z_E06",
+      "20261125T151953195620Z_E06",
+      "20261125T152000938363Z_E06"
+    ],
+    "instrumentation_control": [
+      "20261125T152007911035Z_E06"
+    ],
+    "diagnostics": [
+      "20261125T152014418541Z_E06",
+      "20261125T152018028812Z_E06"
+    ],
+    "original_overapprox": [
+      "20261125T152022644420Z_E06"
+    ],
+    "progress_decomposition": [
+      "20261125T152122452341Z_E06"
+    ],
+    "original_counterexamples": [
+      "20261125T152407453229Z_E06"
+    ]
+  },
+  "expected_counts": {
+    "priority_exact_attempt": 3,
+    "priority_overapprox_safety": 5,
+    "priority_overapprox_core": 11,
+    "priority_exact_lu": 1,
+    "small_exact": 52,
+    "instrumentation_control": 10,
+    "diagnostics": 4,
+    "original_overapprox": 5,
+    "progress_decomposition": 6,
+    "original_counterexamples": 3
+  },
+  "followup_commands": [
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "1",
+      "--scheduler",
+      "original",
+      "--properties",
+      "P01",
+      "P03",
+      "P05",
+      "P06",
+      "P15",
+      "P24",
+      "P25",
+      "P34",
+      "P35",
+      "P36",
+      "P37",
+      "P30"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "1",
+      "--scheduler",
+      "ack_priority",
+      "--properties",
+      "P01",
+      "P03",
+      "P05",
+      "P06",
+      "P15",
+      "P24",
+      "P25",
+      "P34",
+      "P35",
+      "P36",
+      "P37",
+      "P30",
+      "P29"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "2",
+      "--scheduler",
+      "original",
+      "--properties",
+      "P01",
+      "P03",
+      "P05",
+      "P06",
+      "P15",
+      "P24",
+      "P25",
+      "P34",
+      "P35",
+      "P36",
+      "P37",
+      "P30",
+      "P31"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "2",
+      "--scheduler",
+      "ack_priority",
+      "--properties",
+      "P01",
+      "P03",
+      "P05",
+      "P06",
+      "P15",
+      "P24",
+      "P25",
+      "P34",
+      "P35",
+      "P36",
+      "P37",
+      "P30",
+      "P31",
+      "P29"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "2",
+      "--scheduler",
+      "observed",
+      "--properties",
+      "P01",
+      "P15",
+      "P25",
+      "P29",
+      "P30",
+      "P31",
+      "P35",
+      "P36",
+      "P37",
+      "P34"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "3",
+      "--scheduler",
+      "original",
+      "--search-order",
+      "1",
+      "--trace",
+      "--properties",
+      "P35",
+      "P34"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "3",
+      "--scheduler",
+      "ack_priority",
+      "--search-order",
+      "1",
+      "--trace",
+      "--properties",
+      "P34",
+      "P38"
+    ],
+    [
+      "D:\\Anaconda\\python.exe",
+      "D:\\大学\\研一\\软件工程形式化\\小组作业\\UPPAAL_Group_15\\scripts\\run_coordination_experiments.py",
+      "--verifyta",
+      "D:\\Tools\\UPPAAL-5.1.0-beta6\\bin\\verifyta.exe",
+      "--suite",
+      "E06",
+      "--drones",
+      "3",
+      "--scheduler",
+      "original",
+      "--state-representation",
+      "3",
+      "--properties",
+      "P03",
+      "P35",
+      "P30",
+      "P31",
+      "P32"
+    ]
+  ],
+  "console_log": "results\\coordination\\E06_followups_20261125T151946Z.log",
+  "excluded_attempts": {
+    "20261125T150852402927Z_E06": "XML label order rejected; corrected before verification study.",
+    "20261125T151458396871Z_E06": "Formula MAY NOT be satisfied was not recognized by the first parser; rerun with explicit maybe classification.",
+    "20261125T150937929404Z_E06/P03": "Unfinished query stopped after the two preceding exact searches exhausted their budgets; only three completed result records included."
+  },
+  "historical_failure_trace": "20261125T132904048744Z_E05/n3_dmax3_timeout14_hb_active_period20/P08"
+}

@@ -1,0 +1,105 @@
+{
+  "configuration": "n3_dmax3_timeout14_hb_active_period20",
+  "parallel_jobs": 3,
+  "properties": {
+    "P01": {
+      "initial_bfs": {
+        "run": "20261125T132211639271Z_E05",
+        "result": "timeout",
+        "wall_seconds": 120.0922,
+        "time_limit_seconds": 120,
+        "memory_limit_bytes": 8589934592,
+        "sampled_peak_rss_bytes": 952111104,
+        "explored_states": null,
+        "stored_states": null
+      },
+      "extended_bfs": {
+        "run": "20261126T020912983540Z_E05",
+        "result": "memory_limit",
+        "wall_seconds": 585.1149,
+        "time_limit_seconds": 600.0,
+        "memory_limit_bytes": 2147483648,
+        "sampled_peak_rss_bytes": 2147528704,
+        "explored_states": null,
+        "stored_states": null
+      },
+      "final": {
+        "run": "20261125T132904048744Z_E05",
+        "result": "satisfied",
+        "wall_seconds": 0.6179,
+        "time_limit_seconds": 120,
+        "memory_limit_bytes": 8589934592,
+        "sampled_peak_rss_bytes": 17625088,
+        "explored_states": 174,
+        "stored_states": 351,
+        "short_method": "DFS witness"
+      }
+    },
+    "P03": {
+      "initial_bfs": {
+        "run": "20261125T132211639271Z_E05",
+        "result": "timeout",
+        "wall_seconds": 120.0532,
+        "time_limit_seconds": 120,
+        "memory_limit_bytes": 8589934592,
+        "sampled_peak_rss_bytes": 944836608,
+        "explored_states": null,
+        "stored_states": null
+      },
+      "extended_bfs": {
+        "run": "20261126T020912985022Z_E05",
+        "result": "memory_limit",
+        "wall_seconds": 588.0036,
+        "time_limit_seconds": 600.0,
+        "memory_limit_bytes": 2147483648,
+        "sampled_peak_rss_bytes": 2147540992,
+        "explored_states": null,
+        "stored_states": null
+      },
+      "final": {
+        "run": "20261125T152022644420Z_E06",
+        "result": "satisfied",
+        "wall_seconds": 19.8023,
+        "time_limit_seconds": 120,
+        "memory_limit_bytes": 8589934592,
+        "sampled_peak_rss_bytes": 290238464,
+        "explored_states": 2722596,
+        "stored_states": 1087331,
+        "short_method": "E06 conservative proof"
+      }
+    },
+    "P08": {
+      "initial_bfs": {
+        "run": "20261125T132211639271Z_E05",
+        "result": "timeout",
+        "wall_seconds": 120.0829,
+        "time_limit_seconds": 120,
+        "memory_limit_bytes": 8589934592,
+        "sampled_peak_rss_bytes": 951750656,
+        "explored_states": null,
+        "stored_states": null
+      },
+      "extended_bfs": {
+        "run": "20261126T020912983800Z_E05",
+        "result": "memory_limit",
+        "wall_seconds": 584.21,
+        "time_limit_seconds": 600.0,
+        "memory_limit_bytes": 2147483648,
+        "sampled_peak_rss_bytes": 2147639296,
+        "explored_states": null,
+        "stored_states": null
+      },
+      "final": {
+        "run": "20261125T132904048744Z_E05",
+        "result": "satisfied",
+        "wall_seconds": 0.9356,
+        "time_limit_seconds": 120,
+        "memory_limit_bytes": 8589934592,
+        "sampled_peak_rss_bytes": 38268928,
+        "explored_states": 130509,
+        "stored_states": 82651,
+        "short_method": "DFS witness"
+      }
+    }
+  }
+}

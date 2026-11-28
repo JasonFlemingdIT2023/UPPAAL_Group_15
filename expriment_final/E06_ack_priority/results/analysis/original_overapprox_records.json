@@ -1,0 +1,62 @@
+[
+  {
+    "N": 3,
+    "configuration_id": "n3_dmax3_timeout14_scheduler_original",
+    "property_id": "P03",
+    "result": "satisfied",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 19.8023,
+    "sampled_peak_rss_bytes": 290238464,
+    "explored_states": 2722596,
+    "stored_states": 1087331
+  },
+  {
+    "N": 3,
+    "configuration_id": "n3_dmax3_timeout14_scheduler_original",
+    "property_id": "P30",
+    "result": "maybe",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 0.1326,
+    "sampled_peak_rss_bytes": 14565376,
+    "explored_states": null,
+    "stored_states": null
+  },
+  {
+    "N": 3,
+    "configuration_id": "n3_dmax3_timeout14_scheduler_original",
+    "property_id": "P31",
+    "result": "maybe",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 0.1317,
+    "sampled_peak_rss_bytes": 16297984,
+    "explored_states": null,
+    "stored_states": null
+  },
+  {
+    "N": 3,
+    "configuration_id": "n3_dmax3_timeout14_scheduler_original",
+    "property_id": "P32",
+    "result": "maybe",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 0.1338,
+    "sampled_peak_rss_bytes": 14712832,
+    "explored_states": null,
+    "stored_states": null
+  },
+  {
+    "N": 3,
+    "configuration_id": "n3_dmax3_timeout14_scheduler_original",
+    "property_id": "P35",
+    "result": "maybe",
+    "heartbeat_mode": "active",
+    "heartbeat_period": 20,
+    "wall_seconds": 5.5136,
+    "sampled_peak_rss_bytes": 115298304,
+    "explored_states": 847725,
+    "stored_states": 505668
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "purpose": "Native parser/type check for delivered GUI model; no property verification",
+  "model_sha256": "5fbbb9db04673a50e649cd7ede0ec284fb69ac407f6d9f99b29e840329754304",
+  "returncode": 0,
+  "compiled_output_bytes": 133569
+}

@@ -1,0 +1,9 @@
+{
+  "result": "interrupted_after_heartbeat_proof",
+  "reason": "P06 and the finite-traffic argument establish P30\u2013P32. The longer direct P30 attempt already reached its budget.",
+  "stopped_at_utc": "2026-11-25T19:46:07.531374+00:00",
+  "elapsed_verifier_seconds": 30.752,
+  "configured_time_limit_seconds": 600,
+  "memory_limit_bytes": 8589934592,
+  "sampled_peak_rss_bytes": null
+}

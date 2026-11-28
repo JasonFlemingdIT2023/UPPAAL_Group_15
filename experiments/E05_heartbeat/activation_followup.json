@@ -1,0 +1,15 @@
+{
+  "extended_bfs": {
+    "P01": "20261126T020912983540Z_E05/n3_dmax3_timeout14_hb_active_period20/P01",
+    "P03": "20261126T020912985022Z_E05/n3_dmax3_timeout14_hb_active_period20/P03",
+    "P08": "20261126T020912983800Z_E05/n3_dmax3_timeout14_hb_active_period20/P08"
+  },
+  "prior_decisive": {
+    "P01": "20261125T132904048744Z_E05/n3_dmax3_timeout14_hb_active_period20/P01",
+    "P03": "20261125T152022644420Z_E06/n3_dmax3_timeout14_scheduler_original/P03",
+    "P08": "20261125T132904048744Z_E05/n3_dmax3_timeout14_hb_active_period20/P08"
+  },
+  "time_limit_seconds": 600,
+  "memory_limit_bytes": 2147483648,
+  "parallel_jobs": 3
+}
